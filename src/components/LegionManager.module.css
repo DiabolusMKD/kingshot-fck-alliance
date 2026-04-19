@@ -4,6 +4,33 @@
   gap: 30px;
 }
 
+.searchWrapper {
+  display: flex;
+  gap: 12px;
+}
+
+.searchInput {
+  flex: 1;
+  max-width: 400px;
+  padding: 10px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.searchInput::placeholder {
+  color: var(--text-secondary);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  background-color: var(--bg-tertiary);
+}
+
 .tablesWrapper {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;

@@ -24,6 +24,15 @@ export default function LegionManager({
   });
 
   const [generatedString, setGeneratedString] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filterPlayersBySearch = (playerList: Player[]): Player[] => {
+    return playerList.filter(
+      (player) =>
+        player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        player.id.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
 
   useEffect(() => {
     setLegions({
@@ -70,6 +79,15 @@ export default function LegionManager({
 
   return (
     <div className={styles.container}>
+      <div className={styles.searchWrapper}>
+        <input
+          type="text"
+          placeholder="Search by player name or ID..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className={styles.searchInput}
+        />
+      </div>
       <div className={styles.tablesWrapper}>
         {/* Main table - All Players */}
         <div className={styles.tableSection}>
@@ -84,7 +102,7 @@ export default function LegionManager({
                 </tr>
               </thead>
               <tbody>
-                {legions.none.map((player) => (
+                {filterPlayersBySearch(legions.none).map((player) => (
                   <tr key={player.id}>
                     <td>{player.name}</td>
                     <td>{getPowerValue(player)}</td>
@@ -105,8 +123,10 @@ export default function LegionManager({
                 ))}
               </tbody>
             </table>
-            {legions.none.length === 0 && (
-              <div className={styles.emptyMessage}>No unassigned players</div>
+            {filterPlayersBySearch(legions.none).length === 0 && (
+              <div className={styles.emptyMessage}>
+                {searchTerm ? 'No players match your search.' : 'No unassigned players'}
+              </div>
             )}
           </div>
         </div>
@@ -126,7 +146,7 @@ export default function LegionManager({
                   </tr>
                 </thead>
                 <tbody>
-                  {legions.legion1.map((player) => (
+                  {filterPlayersBySearch(legions.legion1).map((player) => (
                     <tr key={player.id}>
                       <td>{player.name}</td>
                       <td>{getPowerValue(player)}</td>
@@ -147,8 +167,10 @@ export default function LegionManager({
                   ))}
                 </tbody>
               </table>
-              {legions.legion1.length === 0 && (
-                <div className={styles.emptyMessage}>No players assigned</div>
+              {filterPlayersBySearch(legions.legion1).length === 0 && (
+                <div className={styles.emptyMessage}>
+                  {searchTerm ? 'No players match your search.' : 'No players assigned'}
+                </div>
               )}
             </div>
           </div>
@@ -166,7 +188,7 @@ export default function LegionManager({
                   </tr>
                 </thead>
                 <tbody>
-                  {legions.legion2.map((player) => (
+                  {filterPlayersBySearch(legions.legion2).map((player) => (
                     <tr key={player.id}>
                       <td>{player.name}</td>
                       <td>{getPowerValue(player)}</td>
@@ -187,8 +209,10 @@ export default function LegionManager({
                   ))}
                 </tbody>
               </table>
-              {legions.legion2.length === 0 && (
-                <div className={styles.emptyMessage}>No players assigned</div>
+              {filterPlayersBySearch(legions.legion2).length === 0 && (
+                <div className={styles.emptyMessage}>
+                  {searchTerm ? 'No players match your search.' : 'No players assigned'}
+                </div>
               )}
             </div>
           </div>
