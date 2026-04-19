@@ -53,7 +53,6 @@ export default function PlayerForm({ player, onSubmit, onCancel }: PlayerFormPro
           name="id"
           value={formData.id}
           onChange={handleChange}
-          disabled={!!player}
           className={styles.input}
           placeholder="e.g. P001"
           required
