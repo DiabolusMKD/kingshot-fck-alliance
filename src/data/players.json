@@ -1,0 +1,32 @@
+[
+  {
+    "id": "P001",
+    "name": "Shadow Knight",
+    "swordland": 1200,
+    "triAlliance": 950
+  },
+  {
+    "id": "P002",
+    "name": "Phoenix Warrior",
+    "swordland": 1100,
+    "triAlliance": 1050
+  },
+  {
+    "id": "P003",
+    "name": "Dragon Slayer",
+    "swordland": 950,
+    "triAlliance": 1150
+  },
+  {
+    "id": "P004",
+    "name": "Storm Rider",
+    "swordland": 1300,
+    "triAlliance": 900
+  },
+  {
+    "id": "P005",
+    "name": "Ice Mage",
+    "swordland": 850,
+    "triAlliance": 1250
+  }
+]
