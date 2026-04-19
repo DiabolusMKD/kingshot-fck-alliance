@@ -1,32 +1,434 @@
 [
   {
     "id": "P001",
-    "name": "Shadow Knight",
-    "swordland": 1200,
-    "triAlliance": 950
+    "name": "Diabolus",
+    "swordland": 1702,
+    "triAlliance": 232
   },
   {
     "id": "P002",
-    "name": "Phoenix Warrior",
-    "swordland": 1100,
-    "triAlliance": 1050
+    "name": "Baroun",
+    "swordland": 3518,
+    "triAlliance": 548
   },
   {
     "id": "P003",
-    "name": "Dragon Slayer",
-    "swordland": 950,
-    "triAlliance": 1150
+    "name": "Steg",
+    "swordland": 2203,
+    "triAlliance": 250
   },
   {
     "id": "P004",
-    "name": "Storm Rider",
-    "swordland": 1300,
-    "triAlliance": 900
+    "name": "SchematicDiagram",
+    "swordland": 2178,
+    "triAlliance": 2350
   },
   {
     "id": "P005",
-    "name": "Ice Mage",
-    "swordland": 850,
-    "triAlliance": 1250
+    "name": "Divine",
+    "swordland": 1928,
+    "triAlliance": 236
+  },
+  {
+    "id": "P006",
+    "name": "Fairview",
+    "swordland": 1619,
+    "triAlliance": 218
+  },
+  {
+    "id": "P007",
+    "name": "Rwan",
+    "swordland": 1434,
+    "triAlliance": 216
+  },
+  {
+    "id": "P008",
+    "name": "Valka",
+    "swordland": 1295,
+    "triAlliance": 155
+  },
+  {
+    "id": "P009",
+    "name": "Anderor",
+    "swordland": 1281,
+    "triAlliance": 1350
+  },
+  {
+    "id": "P010",
+    "name": "TrippedPsyche",
+    "swordland": 1028,
+    "triAlliance": 142
+  },
+  {
+    "id": "P011",
+    "name": "Hancock",
+    "swordland": 1009,
+    "triAlliance": 144
+  },
+  {
+    "id": "P012",
+    "name": "MAD",
+    "swordland": 1788,
+    "triAlliance": 197
+  },
+  {
+    "id": "P013",
+    "name": "Leon",
+    "swordland": 1531,
+    "triAlliance": 185
+  },
+  {
+    "id": "P014",
+    "name": "Davey Jones",
+    "swordland": 1406,
+    "triAlliance": 1550
+  },
+  {
+    "id": "P015",
+    "name": "Chops Lord",
+    "swordland": 1360,
+    "triAlliance": 159
+  },
+  {
+    "id": "P016",
+    "name": "Logan84",
+    "swordland": 1328,
+    "triAlliance": 1400
+  },
+  {
+    "id": "P017",
+    "name": "008",
+    "swordland": 1187,
+    "triAlliance": 177
+  },
+  {
+    "id": "P018",
+    "name": "Rhi",
+    "swordland": 1184,
+    "triAlliance": 170
+  },
+  {
+    "id": "P019",
+    "name": "Pelicano",
+    "swordland": 1178,
+    "triAlliance": 133
+  },
+  {
+    "id": "P020",
+    "name": "Sonhador",
+    "swordland": 1169,
+    "triAlliance": 210
+  },
+  {
+    "id": "P021",
+    "name": "BOT",
+    "swordland": 1140,
+    "triAlliance": 1100
+  },
+  {
+    "id": "P022",
+    "name": "MSTR",
+    "swordland": 1119,
+    "triAlliance": 154
+  },
+  {
+    "id": "P023",
+    "name": "Heemo",
+    "swordland": 1064,
+    "triAlliance": 111
+  },
+  {
+    "id": "P024",
+    "name": "Trey3",
+    "swordland": 972,
+    "triAlliance": 106
+  },
+  {
+    "id": "P025",
+    "name": "angeebi",
+    "swordland": 878,
+    "triAlliance": 76
+  },
+  {
+    "id": "P026",
+    "name": "Alvaro",
+    "swordland": 769,
+    "triAlliance": 88
+  },
+  {
+    "id": "P027",
+    "name": "OMRAN",
+    "swordland": 701,
+    "triAlliance": 750
+  },
+  {
+    "id": "P028",
+    "name": "Moce",
+    "swordland": 631,
+    "triAlliance": 80
+  },
+  {
+    "id": "P029",
+    "name": "FoxVcc",
+    "swordland": 554,
+    "triAlliance": 620
+  },
+  {
+    "id": "P030",
+    "name": "king kingston",
+    "swordland": 439,
+    "triAlliance": 61
+  },
+  {
+    "id": "P031",
+    "name": "Sofia",
+    "swordland": 2740,
+    "triAlliance": 0
+  },
+  {
+    "id": "P032",
+    "name": "Mami Sabrosa",
+    "swordland": 1981,
+    "triAlliance": 0
+  },
+  {
+    "id": "P033",
+    "name": "Legend",
+    "swordland": 1642,
+    "triAlliance": 0
+  },
+  {
+    "id": "P034",
+    "name": "Eivor",
+    "swordland": 1435,
+    "triAlliance": 0
+  },
+  {
+    "id": "P035",
+    "name": "StormCrown",
+    "swordland": 1220,
+    "triAlliance": 0
+  },
+  {
+    "id": "P036",
+    "name": "Golden",
+    "swordland": 1130,
+    "triAlliance": 153
+  },
+  {
+    "id": "P037",
+    "name": "La Woxica",
+    "swordland": 1062,
+    "triAlliance": 0
+  },
+  {
+    "id": "P038",
+    "name": "Binabola",
+    "swordland": 1053,
+    "triAlliance": 0
+  },
+  {
+    "id": "P039",
+    "name": "vizap",
+    "swordland": 1052,
+    "triAlliance": 0
+  },
+  {
+    "id": "P040",
+    "name": "Nyke",
+    "swordland": 1038,
+    "triAlliance": 0
+  },
+  {
+    "id": "P041",
+    "name": "BRUH",
+    "swordland": 1033,
+    "triAlliance": 0
+  },
+  {
+    "id": "P042",
+    "name": "Destruction",
+    "swordland": 1030,
+    "triAlliance": 0
+  },
+  {
+    "id": "P043",
+    "name": "Rolo",
+    "swordland": 1017,
+    "triAlliance": 0
+  },
+  {
+    "id": "P044",
+    "name": "Gabbzzii",
+    "swordland": 920,
+    "triAlliance": 0
+  },
+  {
+    "id": "P045",
+    "name": "TwoDogsFN",
+    "swordland": 918,
+    "triAlliance": 0
+  },
+  {
+    "id": "P046",
+    "name": "Pedro Peton",
+    "swordland": 909,
+    "triAlliance": 0
+  },
+  {
+    "id": "P047",
+    "name": "Lecedre",
+    "swordland": 905,
+    "triAlliance": 0
+  },
+  {
+    "id": "P048",
+    "name": "IMMACULATE",
+    "swordland": 757,
+    "triAlliance": 0
+  },
+  {
+    "id": "P049",
+    "name": "Jonah_19",
+    "swordland": 741,
+    "triAlliance": 0
+  },
+  {
+    "id": "P050",
+    "name": "Lone Wolf",
+    "swordland": 684,
+    "triAlliance": 0
+  },
+  {
+    "id": "P051",
+    "name": "Hilde",
+    "swordland": 642,
+    "triAlliance": 0
+  },
+  {
+    "id": "P052",
+    "name": "miniSofia",
+    "swordland": 325,
+    "triAlliance": 0
+  },
+  {
+    "id": "P053",
+    "name": "19TRiumPH84",
+    "swordland": 1249,
+    "triAlliance": 0
+  },
+  {
+    "id": "P054",
+    "name": "Alcateal",
+    "swordland": 1367,
+    "triAlliance": 0
+  },
+  {
+    "id": "P055",
+    "name": "LadyV12",
+    "swordland": 923,
+    "triAlliance": 0
+  },
+  {
+    "id": "P056",
+    "name": "Sugarmomma",
+    "swordland": 842,
+    "triAlliance": 0
+  },
+  {
+    "id": "P057",
+    "name": "Grosvenor",
+    "swordland": 810,
+    "triAlliance": 104
+  },
+  {
+    "id": "P058",
+    "name": "Tamago",
+    "swordland": 0,
+    "triAlliance": 249
+  },
+  {
+    "id": "P059",
+    "name": "Mikus",
+    "swordland": 0,
+    "triAlliance": 217
+  },
+  {
+    "id": "P060",
+    "name": "YOU",
+    "swordland": 0,
+    "triAlliance": 165
+  },
+  {
+    "id": "P061",
+    "name": "Pepsiman",
+    "swordland": 0,
+    "triAlliance": 157
+  },
+  {
+    "id": "P062",
+    "name": "Choo",
+    "swordland": 0,
+    "triAlliance": 161
+  },
+  {
+    "id": "P063",
+    "name": "Qweezy",
+    "swordland": 0,
+    "triAlliance": 161
+  },
+  {
+    "id": "P064",
+    "name": "Kong",
+    "swordland": 0,
+    "triAlliance": 147
+  },
+  {
+    "id": "P065",
+    "name": "VilAReS",
+    "swordland": 0,
+    "triAlliance": 137
+  },
+  {
+    "id": "P066",
+    "name": "Seiki_19",
+    "swordland": 0,
+    "triAlliance": 130
+  },
+  {
+    "id": "P067",
+    "name": "Leecedre",
+    "swordland": 0,
+    "triAlliance": 102
+  },
+  {
+    "id": "P068",
+    "name": "Boromir",
+    "swordland": 0,
+    "triAlliance": 110
+  },
+  {
+    "id": "P069",
+    "name": "Pamagar",
+    "swordland": 0,
+    "triAlliance": 83
+  },
+  {
+    "id": "P070",
+    "name": "Johan_19",
+    "swordland": 0,
+    "triAlliance": 7
+  },
+  {
+    "id": "P071",
+    "name": "batou",
+    "swordland": 0,
+    "triAlliance": 114
+  },
+  {
+    "id": "P072",
+    "name": "Freesgen",
+    "swordland": 0,
+    "triAlliance": 85
   }
 ]
