@@ -16,6 +16,7 @@ export default function PlayersTable({ players, onEdit, onDelete }: PlayersTable
   const filteredPlayers = players.filter(
     (player) =>
       player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      player.alias.toLowerCase().includes(searchTerm.toLowerCase()) ||
       player.id.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -36,6 +37,7 @@ export default function PlayersTable({ players, onEdit, onDelete }: PlayersTable
           <tr>
             <th>Player ID</th>
             <th>Name</th>
+            <th>Alias</th>
             <th>Swordland</th>
             <th>Tri Alliance</th>
             <th>Power</th>
@@ -47,6 +49,7 @@ export default function PlayersTable({ players, onEdit, onDelete }: PlayersTable
             <tr key={player.id}>
               <td>{player.id}</td>
               <td>{player.name}</td>
+              <td>{player.alias}</td>
               <td>{player.swordland}</td>
               <td>{player.triAlliance}</td>
               <td>{Math.max(player.swordland, player.triAlliance)}</td>

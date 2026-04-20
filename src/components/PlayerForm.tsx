@@ -14,8 +14,10 @@ export default function PlayerForm({ player, onSubmit, onCancel }: PlayerFormPro
   const [formData, setFormData] = useState({
     id: '',
     name: '',
+    alias: '',
     swordland: 0,
     triAlliance: 0,
+    power: 0,
   });
 
   useEffect(() => {
@@ -71,6 +73,37 @@ export default function PlayerForm({ player, onSubmit, onCancel }: PlayerFormPro
           onChange={handleChange}
           className={styles.input}
           placeholder="Player name"
+          required
+        />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label htmlFor="alias" className={styles.label}>
+          Alias
+        </label>
+        <input
+          type="text"
+          id="alias"
+          name="alias"
+          value={formData.alias}
+          onChange={handleChange}
+          className={styles.input}
+          placeholder="Player alias"
+        />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label htmlFor="power" className={styles.label}>
+          Power
+        </label>
+        <input
+          type="number"
+          id="power"
+          name="power"
+          value={formData.power}
+          onChange={handleChange}
+          className={styles.input}
+          placeholder="0"
           required
         />
       </div>

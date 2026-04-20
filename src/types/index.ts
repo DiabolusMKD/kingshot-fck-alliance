@@ -1,8 +1,10 @@
 export interface Player {
   id: string;
   name: string;
+  alias: string;
   swordland: number;
   triAlliance: number;
+  power: number;
 }
 
 export interface Legion {
