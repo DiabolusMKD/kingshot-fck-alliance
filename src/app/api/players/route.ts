@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { Player } from '@/types';
 
+export const dynamic = 'force-dynamic'
 const DATA_FILE = path.join(process.cwd(), 'src', 'data', 'players.json');
 
 function readPlayersData(): Player[] {
