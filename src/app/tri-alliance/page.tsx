@@ -4,15 +4,31 @@ import { useState, useEffect } from 'react';
 import { Player } from '@/types';
 import Navigation from '@/components/Navigation';
 import LegionManager from '@/components/LegionManager';
-import playersData from '@/data/players.json';
+import { getPlayers } from '@/utils/playerService';
 import styles from './page.module.css';
 
 export default function TriAlliancePage() {
   const [players, setPlayers] = useState<Player[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setPlayers(playersData);
+    loadPlayers();
   }, []);
+
+  const loadPlayers = async () => {
+    try {
+      setIsLoading(true);
+      const allPlayers = await getPlayers();
+      // Filter to only show active players
+      const activePlayers = allPlayers.filter((p) => p.active);
+      setPlayers(activePlayers);
+    } catch (error) {
+      console.error('Failed to load players:', error);
+      alert('Failed to load players');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSave = async (legion1: Player[], legion2: Player[]) => {
     // Create the legion data structure
@@ -58,12 +74,16 @@ export default function TriAlliancePage() {
             </p>
           </div>
 
-          <LegionManager
-            players={players}
-            powerKey="triAlliance"
-            eventName="Tri Alliance"
-            onSave={handleSave}
-          />
+          {isLoading ? (
+            <p>Loading players...</p>
+          ) : (
+            <LegionManager
+              players={players}
+              powerKey="triAlliance"
+              eventName="Tri Alliance"
+              onSave={handleSave}
+            />
+          )}
         </div>
       </main>
     </>

@@ -13,11 +13,13 @@ interface PlayerFormProps {
 export default function PlayerForm({ player, onSubmit, onCancel }: PlayerFormProps) {
   const [formData, setFormData] = useState({
     id: '',
+    playerId: '',
     name: '',
     alias: '',
     swordland: 0,
     triAlliance: 0,
     power: 0,
+    active: true,
   });
 
   useEffect(() => {
@@ -30,7 +32,7 @@ export default function PlayerForm({ player, onSubmit, onCancel }: PlayerFormPro
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'id' || name === 'name' ? value : parseInt(value, 10),
+      [name]: value,
     }));
   };
 
@@ -54,10 +56,24 @@ export default function PlayerForm({ player, onSubmit, onCancel }: PlayerFormPro
           id="id"
           name="id"
           value={formData.id}
+          readOnly={true}
+          hidden={true}
+          required
+        />
+      </div>
+
+      <div className={styles.formGroup}>
+        <label htmlFor="playerId" className={styles.label}>
+          In-Game Player ID
+        </label>
+        <input
+          type="text"
+          id="playerId"
+          name="playerId"
+          value={formData.playerId}
           onChange={handleChange}
           className={styles.input}
-          placeholder="e.g. P001"
-          required
+          placeholder="e.g. 123123123"
         />
       </div>
 

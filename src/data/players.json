@@ -1,562 +1,712 @@
 [
   {
-    "id": "P001",
+    "id": "1",
+    "playerId": 121398024,
     "name": "Diabolus",
     "alias": "Diabolus",
     "swordland": 1702,
     "triAlliance": 232,
-    "power": 0
+    "power": 238549815,
+    "active": true
   },
   {
-    "id": "P002",
+    "id": "2",
+    "playerId": 118547280,
     "name": "Baroun",
     "alias": "Baroun",
     "swordland": 3518,
     "triAlliance": 548,
-    "power": 0
+    "power": 560138906,
+    "active": true
   },
   {
-    "id": "P003",
-    "name": "Steg",
+    "id": "3",
+    "playerId": "P003",
+    "name": "Fake Steg",
     "alias": "Steg",
     "swordland": 2203,
     "triAlliance": 250,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P004",
-    "name": "SchematicDiagram",
+    "id": "4",
+    "playerId": "P004",
+    "name": "The Real Steg",
     "alias": "Tamago",
     "swordland": 2178,
     "triAlliance": 2350,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P005",
+    "id": "5",
+    "playerId": "P005",
     "name": "Divine",
     "alias": "Recluzio",
     "swordland": 1928,
     "triAlliance": 236,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P006",
+    "id": "6",
+    "playerId": "P006",
     "name": "Fairview",
     "alias": "Fairview",
     "swordland": 1619,
     "triAlliance": 218,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P007",
+    "id": "7",
+    "playerId": "P007",
     "name": "Rwan",
     "alias": "Rwan",
     "swordland": 1434,
     "triAlliance": 216,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P008",
+    "id": "8",
+    "playerId": "P008",
     "name": "Valka",
     "alias": "Valka",
     "swordland": 1295,
     "triAlliance": 155,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P009",
+    "id": "9",
+    "playerId": "P009",
     "name": "Anderor",
     "alias": "Anderor",
     "swordland": 1281,
     "triAlliance": 1350,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P010",
+    "id": "10",
+    "playerId": "P010",
     "name": "TrippedPsyche",
     "alias": "TrippedPsyche",
     "swordland": 1028,
     "triAlliance": 142,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P011",
+    "id": "11",
+    "playerId": "P011",
     "name": "Hancock",
     "alias": "Hancock",
     "swordland": 1009,
     "triAlliance": 144,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P012",
+    "id": "12",
+    "playerId": "P012",
     "name": "MAD",
     "alias": "MAD",
     "swordland": 1788,
     "triAlliance": 197,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P013",
+    "id": "13",
+    "playerId": "P013",
     "name": "Leon",
     "alias": "Leon",
     "swordland": 1531,
     "triAlliance": 185,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P014",
+    "id": "14",
+    "playerId": "P014",
     "name": "Davey Jones",
     "alias": "Davey Jones",
     "swordland": 1406,
     "triAlliance": 1550,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P015",
+    "id": "15",
+    "playerId": "P015",
     "name": "Chops Lord",
     "alias": "Chops Lord",
     "swordland": 1360,
     "triAlliance": 159,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P016",
+    "id": "16",
+    "playerId": "P016",
     "name": "Logan84",
     "alias": "Logan84",
     "swordland": 1328,
     "triAlliance": 1400,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P017",
+    "id": "17",
+    "playerId": "P017",
     "name": "008",
     "alias": "008",
     "swordland": 1187,
     "triAlliance": 177,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P018",
+    "id": "18",
+    "playerId": "P018",
     "name": "Rhi",
     "alias": "Rhi",
     "swordland": 1184,
     "triAlliance": 170,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P019",
+    "id": "19",
+    "playerId": "P019",
     "name": "Pelicano",
     "alias": "Pelicano",
     "swordland": 1178,
     "triAlliance": 133,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P020",
+    "id": "20",
+    "playerId": "P020",
     "name": "Sonhador",
     "alias": "Sonhador",
     "swordland": 1169,
     "triAlliance": 210,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P021",
+    "id": "21",
+    "playerId": "P021",
     "name": "BOT",
     "alias": "BOT",
     "swordland": 1140,
     "triAlliance": 1100,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P022",
+    "id": "22",
+    "playerId": "P022",
     "name": "MSTR",
     "alias": "MSTR",
     "swordland": 1119,
     "triAlliance": 154,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P023",
+    "id": "23",
+    "playerId": "P023",
     "name": "Heemo",
     "alias": "Heemo",
     "swordland": 1064,
     "triAlliance": 111,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P024",
+    "id": "24",
+    "playerId": "P024",
     "name": "Trey3",
     "alias": "Trey3",
     "swordland": 972,
     "triAlliance": 106,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P025",
+    "id": "25",
+    "playerId": "P025",
     "name": "angeebi",
     "alias": "angeebi",
     "swordland": 878,
     "triAlliance": 76,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P026",
+    "id": "26",
+    "playerId": "P026",
     "name": "Alvaro",
     "alias": "Alvaro",
     "swordland": 769,
     "triAlliance": 88,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P027",
+    "id": "27",
+    "playerId": "P027",
     "name": "OMRAN",
     "alias": "OMRAN",
     "swordland": 701,
     "triAlliance": 750,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P028",
+    "id": "28",
+    "playerId": "P028",
     "name": "Moce",
     "alias": "Moce",
     "swordland": 631,
     "triAlliance": 80,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P029",
+    "id": "29",
+    "playerId": "P029",
     "name": "FoxVcc",
     "alias": "FoxVcc",
     "swordland": 554,
     "triAlliance": 620,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P030",
+    "id": "30",
+    "playerId": "P030",
     "name": "king kingston",
     "alias": "king kingston",
     "swordland": 439,
     "triAlliance": 61,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P031",
+    "id": "31",
+    "playerId": 109899433,
     "name": "Sofia",
     "alias": "Sofia",
     "swordland": 2740,
     "triAlliance": 0,
-    "power": 0
+    "power": "412487149",
+    "active": true
   },
   {
-    "id": "P032",
+    "id": "32",
+    "playerId": "P032",
     "name": "Mami Sabrosa",
     "alias": "Mami Sabrosa",
     "swordland": 1981,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P033",
+    "id": "33",
+    "playerId": "P033",
     "name": "Legend",
     "alias": "Legend",
     "swordland": 1642,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P034",
+    "id": "34",
+    "playerId": "P034",
     "name": "Eivor",
     "alias": "Eivor",
     "swordland": 1435,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P035",
+    "id": "35",
+    "playerId": "P035",
     "name": "StormCrown",
     "alias": "StormCrown",
     "swordland": 1220,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P036",
+    "id": "36",
+    "playerId": "P036",
     "name": "Golden",
     "alias": "Golden",
     "swordland": 1130,
     "triAlliance": 153,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P037",
+    "id": "37",
+    "playerId": "P037",
     "name": "La Woxica",
     "alias": "La Woxica",
     "swordland": 1062,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P038",
+    "id": "38",
+    "playerId": "P038",
     "name": "Binabola",
     "alias": "Binabola",
     "swordland": 1053,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P039",
+    "id": "39",
+    "playerId": "P039",
     "name": "vizap",
     "alias": "vizap",
     "swordland": 1052,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P040",
+    "id": "40",
+    "playerId": "P040",
     "name": "Nyke",
     "alias": "Nyke",
     "swordland": 1038,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P041",
+    "id": "41",
+    "playerId": "P041",
     "name": "BRUH",
     "alias": "BRUH",
     "swordland": 1033,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P042",
+    "id": "42",
+    "playerId": "P042",
     "name": "Destruction",
     "alias": "Destruction",
     "swordland": 1030,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P043",
+    "id": "43",
+    "playerId": "P043",
     "name": "Rolo",
     "alias": "Rolo",
     "swordland": 1017,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P044",
+    "id": "44",
+    "playerId": "P044",
     "name": "Gabbzzii",
     "alias": "Gabbzzii",
     "swordland": 920,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P045",
+    "id": "45",
+    "playerId": "P045",
     "name": "TwoDogsFN",
     "alias": "TwoDogsFN",
     "swordland": 918,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P046",
+    "id": "46",
+    "playerId": "P046",
     "name": "Pedro Peton",
     "alias": "Pedro Peton",
     "swordland": 909,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P047",
+    "id": "47",
+    "playerId": "P047",
     "name": "Lecedre",
     "alias": "Lecedre",
     "swordland": 905,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P048",
+    "id": "48",
+    "playerId": "P048",
     "name": "IMMACULATE",
     "alias": "IMMACULATE",
     "swordland": 757,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P049",
+    "id": "49",
+    "playerId": "P049",
     "name": "Jonah_19",
     "alias": "Jonah_19",
     "swordland": 741,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P050",
+    "id": "50",
+    "playerId": "P050",
     "name": "Lone Wolf",
     "alias": "Lone Wolf",
     "swordland": 684,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P051",
+    "id": "51",
+    "playerId": "P051",
     "name": "Hilde",
     "alias": "Hilde",
     "swordland": 642,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P052",
+    "id": "52",
+    "playerId": "P052",
     "name": "miniSofia",
     "alias": "miniSofia",
     "swordland": 325,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P053",
+    "id": "53",
+    "playerId": "P053",
     "name": "19TRiumPH84",
     "alias": "19TRiumPH84",
     "swordland": 1249,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P054",
+    "id": "54",
+    "playerId": "P054",
     "name": "Alcateal",
     "alias": "Alcateal",
     "swordland": 1367,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P055",
+    "id": "55",
+    "playerId": "P055",
     "name": "LadyV12",
     "alias": "LadyV12",
     "swordland": 923,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P056",
+    "id": "56",
+    "playerId": "P056",
     "name": "Sugarmomma",
     "alias": "Sugarmomma",
     "swordland": 842,
     "triAlliance": 0,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P057",
+    "id": "57",
+    "playerId": "P057",
     "name": "Grosvenor",
     "alias": "Grosvenor",
     "swordland": 810,
     "triAlliance": 104,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P059",
+    "id": "59",
+    "playerId": "P059",
     "name": "Mikus",
     "alias": "Mikus",
     "swordland": 0,
     "triAlliance": 217,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P060",
+    "id": "60",
+    "playerId": "P060",
     "name": "YOU",
     "alias": "YOU",
     "swordland": 0,
     "triAlliance": 165,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P061",
+    "id": "61",
+    "playerId": "P061",
     "name": "Pepsiman",
     "alias": "Pepsiman",
     "swordland": 0,
     "triAlliance": 157,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P062",
+    "id": "62",
+    "playerId": "P062",
     "name": "Choo",
     "alias": "Choo",
     "swordland": 0,
     "triAlliance": 161,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P063",
+    "id": "63",
+    "playerId": "P063",
     "name": "Qweezy",
     "alias": "Qweezy",
     "swordland": 0,
     "triAlliance": 161,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P064",
+    "id": "64",
+    "playerId": "P064",
     "name": "Kong",
     "alias": "Kong",
     "swordland": 0,
     "triAlliance": 147,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P065",
+    "id": "65",
+    "playerId": "P065",
     "name": "VilAReS",
     "alias": "VilAReS",
     "swordland": 0,
     "triAlliance": 137,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P066",
+    "id": "66",
+    "playerId": "P066",
     "name": "Seiki_19",
     "alias": "Seiki_19",
     "swordland": 0,
     "triAlliance": 130,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P068",
+    "id": "68",
+    "playerId": "P068",
     "name": "Boromir",
     "alias": "Boromir",
     "swordland": 0,
     "triAlliance": 110,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P069",
+    "id": "69",
+    "playerId": "P069",
     "name": "Pamagar",
     "alias": "Pamagar",
     "swordland": 0,
     "triAlliance": 83,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P070",
+    "id": "70",
+    "playerId": "P070",
     "name": "Johan_19",
     "alias": "Johan_19",
     "swordland": 0,
     "triAlliance": 7,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P071",
+    "id": "71",
+    "playerId": "P071",
     "name": "batou",
     "alias": "batou",
     "swordland": 0,
     "triAlliance": 114,
-    "power": 0
+    "power": 0,
+    "active": true
   },
   {
-    "id": "P072",
+    "id": "72",
+    "playerId": "P072",
     "name": "Freesgen",
     "alias": "Freesgen",
     "swordland": 0,
     "triAlliance": 85,
-    "power": 0
+    "power": 0,
+    "active": true
+  },
+  {
+    "id": "73",
+    "playerId": 109899433,
+    "name": "DRAGON&Q8",
+    "alias": "DRAGON&Q8",
+    "swordland": 2740,
+    "triAlliance": 0,
+    "power": 412816292,
+    "active": true
   }
 ]
