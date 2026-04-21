@@ -16,8 +16,7 @@ export default function PlayersTable({ players, onEdit, onDelete }: PlayersTable
   const filteredPlayers = players.filter(
     (player) =>
       player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      player.alias.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      player.playerId.toLowerCase().includes(searchTerm.toLowerCase())
+      player.alias.toLowerCase().includes(searchTerm.toLowerCase())
   ).sort((a, b) => b.power - a.power); // Sort by power descending
 
   return (
