@@ -4,7 +4,6 @@ import path from 'path';
 import { Player } from '@/types';
 
 const DATA_FILE = path.join(process.cwd(), 'src', 'data', 'players.json');
-console.log('DATA_FILE path:', DATA_FILE);
 
 function readPlayersData(): Player[] {
     try {
