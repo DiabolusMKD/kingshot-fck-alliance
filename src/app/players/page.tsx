@@ -19,10 +19,10 @@ export default function PlayersPage() {
     loadPlayers();
   }, []);
 
-  const loadPlayers = async () => {
+  const loadPlayers = () => {
     try {
       setIsLoading(true);
-      const allPlayers = await getPlayers();
+      const allPlayers = getPlayers();
       // Filter to only show active players
       const activePlayers = allPlayers.filter((p) => p.active);
       setPlayers(activePlayers);
@@ -44,10 +44,10 @@ export default function PlayersPage() {
     setIsDialogOpen(true);
   };
 
-  const handleDeletePlayer = async (playerId: string) => {
+  const handleDeletePlayer = (playerId: string) => {
     if (confirm('Are you sure you want to deactivate this player?')) {
       try {
-        await deactivatePlayer(playerId);
+        deactivatePlayer(playerId);
         setPlayers((prev) => prev.filter((p) => p.id !== playerId));
       } catch (error) {
         console.error('Failed to deactivate player:', error);
@@ -56,11 +56,11 @@ export default function PlayersPage() {
     }
   };
 
-  const handleFormSubmit = async (formData: Player | Omit<Player, 'id'>) => {
+  const handleFormSubmit = (formData: Player | Omit<Player, 'id'>) => {
     try {
       if (selectedPlayer) {
         // Update existing player
-        await updatePlayer(selectedPlayer.id, formData as Omit<Player, 'id'>);
+        updatePlayer(selectedPlayer.id, formData as Omit<Player, 'id'>);
         setPlayers((prev) =>
           prev.map((p) =>
             p.id === selectedPlayer.id
@@ -72,7 +72,7 @@ export default function PlayersPage() {
         // Add new player
         const id =players.length > 0 ? (parseInt(players[players.length - 1].id) + 1).toString() : '1';
         const formDataWithId = { ...formData, id } as Player;
-        const newPlayer = await createPlayer(formDataWithId);
+        const newPlayer = createPlayer(formDataWithId);
         setPlayers((prev) => [...prev, newPlayer]);
       }
       setIsDialogOpen(false);

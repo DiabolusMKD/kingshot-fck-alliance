@@ -15,10 +15,10 @@ export default function SwordlandPage() {
     loadPlayers();
   }, []);
 
-  const loadPlayers = async () => {
+  const loadPlayers = () => {
     try {
       setIsLoading(true);
-      const allPlayers = await getPlayers();
+      const allPlayers = getPlayers();
       // Filter to only show active players
       const activePlayers = allPlayers.filter((p) => p.active);
       setPlayers(activePlayers);

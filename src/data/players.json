@@ -1,7 +1,7 @@
 [
   {
     "id": "1",
-    "playerId": 121398024,
+    "playerId": "121398024",
     "name": "Steg from Temu",
     "alias": "Diabolus",
     "swordland": 1702,
@@ -11,7 +11,7 @@
   },
   {
     "id": "2",
-    "playerId": 118547280,
+    "playerId": "118547280",
     "name": "Baroun",
     "alias": "Baroun",
     "swordland": 3518,
@@ -301,12 +301,12 @@
   },
   {
     "id": "31",
-    "playerId": 109899433,
+    "playerId": "109899433",
     "name": "Sofia",
     "alias": "Sofia",
     "swordland": 2740,
     "triAlliance": 0,
-    "power": "412487149",
+    "power": 412487149,
     "active": true
   },
   {
@@ -701,7 +701,7 @@
   },
   {
     "id": "73",
-    "playerId": 109899433,
+    "playerId": "109899433",
     "name": "DRAGON&Q8",
     "alias": "DRAGON&Q8",
     "swordland": 2740,
