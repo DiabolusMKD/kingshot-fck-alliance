@@ -33,9 +33,10 @@
 
 .tableWrapper {
   width: 100%;
-  overflow-x: auto;
+  overflow: auto;
   border: 1px solid var(--border-color);
   border-radius: 8px;
+  max-height: calc(100vh - 400px);
 }
 
 .table {
@@ -118,6 +119,17 @@
 
 .empty p {
   margin: 0;
+}
+
+.clearButton {
+  padding: 6px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 @media (max-width: 768px) {

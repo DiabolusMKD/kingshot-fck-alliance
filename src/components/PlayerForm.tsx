@@ -6,40 +6,50 @@ import styles from './PlayerForm.module.css';
 
 interface PlayerFormProps {
   player?: Player;
+  nextPlayerId: number;
   onSubmit: (player: Omit<Player, 'id'> | Player) => void;
   onCancel: () => void;
 }
 
-export default function PlayerForm({ player, onSubmit, onCancel }: PlayerFormProps) {
-  const [formData, setFormData] = useState({
-    id: '',
-    playerId: '',
-    name: '',
-    alias: '',
-    swordland: 0,
-    triAlliance: 0,
-    power: 0,
-    active: true,
-  });
+const EMPTY_FORM_DATA = {
+  playerId: '',
+  name: '',
+  alias: '',
+  swordland: 0,
+  triAlliance: 0,
+  power: 0,
+  active: true,
+};
+
+export default function PlayerForm({ player, nextPlayerId, onSubmit, onCancel }: PlayerFormProps) {
+  const [formData, setFormData] = useState(EMPTY_FORM_DATA);
+  const isEditMode = !!player;
 
   useEffect(() => {
     if (player) {
-      setFormData(player);
+      // Edit mode: populate with existing player data
+      const { id, ...playerDataWithoutId } = player;
+      setFormData(playerDataWithoutId);
+    } else {
+      // Add mode: clear all fields
+      setFormData(EMPTY_FORM_DATA);
     }
   }, [player]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    const numericFields = ['playerId', 'swordland', 'triAlliance', 'power'];
+    
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: numericFields.includes(name) && value ? Number(value) : value,
     }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || formData.id === '') {
-      alert('Please fill in all fields');
+    if (!formData.name) {
+      alert('Please enter a player name');
       return;
     }
     onSubmit(formData);
@@ -47,21 +57,6 @@ export default function PlayerForm({ player, onSubmit, onCancel }: PlayerFormPro
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
-      <div className={styles.formGroup}>
-        <label htmlFor="id" className={styles.label}>
-          Player ID
-        </label>
-        <input
-          type="text"
-          id="id"
-          name="id"
-          value={formData.id}
-          readOnly={true}
-          hidden={true}
-          required
-        />
-      </div>
-
       <div className={styles.formGroup}>
         <label htmlFor="playerId" className={styles.label}>
           In-Game Player ID
@@ -73,13 +68,13 @@ export default function PlayerForm({ player, onSubmit, onCancel }: PlayerFormPro
           value={formData.playerId}
           onChange={handleChange}
           className={styles.input}
-          placeholder="e.g. 123123123"
+          placeholder="e.g. 123123123 or P001"
         />
       </div>
 
       <div className={styles.formGroup}>
         <label htmlFor="name" className={styles.label}>
-          Name
+          Name <span className={styles.required}>*</span>
         </label>
         <input
           type="text"
@@ -120,7 +115,7 @@ export default function PlayerForm({ player, onSubmit, onCancel }: PlayerFormPro
           onChange={handleChange}
           className={styles.input}
           placeholder="0"
-          required
+          min="0"
         />
       </div>
 
@@ -136,7 +131,7 @@ export default function PlayerForm({ player, onSubmit, onCancel }: PlayerFormPro
           onChange={handleChange}
           className={styles.input}
           placeholder="0"
-          required
+          min="0"
         />
       </div>
 
@@ -152,7 +147,7 @@ export default function PlayerForm({ player, onSubmit, onCancel }: PlayerFormPro
           onChange={handleChange}
           className={styles.input}
           placeholder="0"
-          required
+          min="0"
         />
       </div>
 
@@ -161,7 +156,7 @@ export default function PlayerForm({ player, onSubmit, onCancel }: PlayerFormPro
           Cancel
         </button>
         <button type="submit" className={styles.submitButton}>
-          {player ? 'Update Player' : 'Add Player'}
+          {isEditMode ? 'Update Player' : 'Add Player'}
         </button>
       </div>
     </form>

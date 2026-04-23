@@ -8,6 +8,7 @@ import PlayerForm from '@/components/PlayerForm';
 import Dialog from '@/components/Dialog';
 import { getPlayers, createPlayer, updatePlayer, deactivatePlayer } from '@/utils/playerService';
 import styles from './page.module.css';
+import { formatNumbers } from '@/utils/formatNumbers';
 
 export default function PlayersPage() {
   const [players, setPlayers] = useState<Player[]>([]);
@@ -70,7 +71,7 @@ export default function PlayersPage() {
         );
       } else {
         // Add new player
-        const id =players.length > 0 ? (parseInt(players[players.length - 1].id) + 1).toString() : '1';
+        const id = players.length > 0 ? (parseInt(players[players.length - 1].id) + 1).toString() : '1';
         const formDataWithId = { ...formData, id } as Player;
         const newPlayer = createPlayer(formDataWithId);
         setPlayers((prev) => [...prev, newPlayer]);
@@ -86,6 +87,20 @@ export default function PlayersPage() {
     setIsDialogOpen(false);
     setSelectedPlayer(undefined);
   };
+
+  const exportToCSV = () => {
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      players.map((player) => `${player.name},${player.alias},${formatNumbers(player.power)}`).join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'players.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
 
   if (isLoading) {
     return (
@@ -117,6 +132,10 @@ export default function PlayersPage() {
             onEdit={handleEditPlayer}
             onDelete={handleDeletePlayer}
           />
+
+          <button className={styles.exportButton} onClick={exportToCSV}>
+            Export to CSV
+          </button>
         </div>
       </main>
 
@@ -127,6 +146,7 @@ export default function PlayersPage() {
       >
         <PlayerForm
           player={selectedPlayer}
+          nextPlayerId={players.length > 0 ? (parseInt(players[players.length - 1].id) + 1) : 1}
           onSubmit={handleFormSubmit}
           onCancel={handleFormCancel}
         />
