@@ -25,7 +25,7 @@ export default function PlayersPage() {
       setIsLoading(true);
       const allPlayers = getPlayers();
       // Filter to only show active players
-      const activePlayers = allPlayers.filter((p) => p.active);
+      const activePlayers = allPlayers.filter((p) => p.active).sort((a, b) => b.power - a.power); // Sort by power descending
       setPlayers(activePlayers);
     } catch (error) {
       console.error('Failed to load players:', error);
@@ -89,12 +89,22 @@ export default function PlayersPage() {
   };
 
   const exportToCSV = () => {
-    const csvContent =
-      'data:text/csv;charset=utf-8,' +
-      players.map((player) => `${player.name},${player.alias},${formatNumbers(player.power)}`).join('\n');
-    const encodedUri = encodeURI(csvContent);
+    const csvContent = [
+      ['Player ID', 'Name', 'Alias', 'Swordland', 'Tri Alliance', 'Power'],
+      ...players.map((p) => [
+        p.playerId,
+        p.name,
+        p.alias,
+        p.swordland,
+        p.triAlliance,
+        p.power
+      ])
+    ];
+    const csvString = csvContent.map((row) => row.join(',')).join('\n');
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
+    link.setAttribute('href', url);
     link.setAttribute('download', 'players.csv');
     document.body.appendChild(link);
     link.click();
