@@ -1,5 +1,5 @@
 export interface Player {
-  id: string;
+  id: string; // UUID from Supabase
   playerId: string;
   name: string;
   alias: string;
@@ -7,6 +7,8 @@ export interface Player {
   triAlliance: number;
   power: number;
   active: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Legion {

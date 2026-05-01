@@ -7,6 +7,8 @@ import PlayersTable from '@/components/PlayersTable';
 import PlayerForm from '@/components/PlayerForm';
 import Dialog from '@/components/Dialog';
 import { getPlayers, createPlayer, updatePlayer, deactivatePlayer } from '@/utils/playerService';
+import { fetchPlayerFromKingshot } from '@/utils/kingshotApi';
+import { getSessionPlayers, setSessionPlayers, upsertSessionPlayer, removeSessionPlayer } from '@/utils/sessionStorageService';
 import styles from './page.module.css';
 import { formatNumbers } from '@/utils/formatNumbers';
 
@@ -20,16 +22,24 @@ export default function PlayersPage() {
     loadPlayers();
   }, []);
 
-  const loadPlayers = () => {
+  const loadPlayers = async () => {
     try {
       setIsLoading(true);
-      const allPlayers = getPlayers();
-      // Filter to only show active players
-      const activePlayers = allPlayers.filter((p) => p.active).sort((a, b) => b.power - a.power); // Sort by power descending
+      const allPlayers = await getPlayers();
+      // Filter to only show active players and sort by power descending
+      const activePlayers = allPlayers.filter((p) => p.active).sort((a, b) => b.power - a.power);
       setPlayers(activePlayers);
+      // Sync with session storage
+      setSessionPlayers(activePlayers);
     } catch (error) {
       console.error('Failed to load players:', error);
-      alert('Failed to load players');
+      // Try to use session storage as fallback
+      const sessionPlayers = getSessionPlayers();
+      if (sessionPlayers.length > 0) {
+        setPlayers(sessionPlayers);
+      } else {
+        alert('Failed to load players. Please ensure Supabase credentials are set in .env.local');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -50,6 +60,7 @@ export default function PlayersPage() {
       try {
         deactivatePlayer(playerId);
         setPlayers((prev) => prev.filter((p) => p.id !== playerId));
+        removeSessionPlayer(playerId);
       } catch (error) {
         console.error('Failed to deactivate player:', error);
         alert('Failed to deactivate player');
@@ -57,29 +68,49 @@ export default function PlayersPage() {
     }
   };
 
-  const handleFormSubmit = (formData: Player | Omit<Player, 'id'>) => {
+  const handleFormSubmit = async (formData: Omit<Player, 'id' | 'created_at' | 'updated_at'>) => {
     try {
+      setIsLoading(true);
+
       if (selectedPlayer) {
         // Update existing player
-        updatePlayer(selectedPlayer.id, formData as Omit<Player, 'id'>);
+        const updatedPlayer = await updatePlayer(selectedPlayer.id, formData);
         setPlayers((prev) =>
           prev.map((p) =>
-            p.id === selectedPlayer.id
-              ? { ...(formData as Omit<Player, 'id'>), id: selectedPlayer.id, active: true }
-              : p
+            p.id === selectedPlayer.id ? updatedPlayer : p
           )
         );
+        upsertSessionPlayer(updatedPlayer);
       } else {
-        // Add new player
-        const id = players.length > 0 ? (parseInt(players[players.length - 1].id) + 1).toString() : '1';
-        const formDataWithId = { ...formData, id } as Player;
-        const newPlayer = createPlayer(formDataWithId);
-        setPlayers((prev) => [...prev, newPlayer]);
+        // Add new player - fetch from API first if we only have playerId
+        let playerData = formData;
+
+        if (!formData.name) {
+          try {
+            const kingshotData = await fetchPlayerFromKingshot(formData.playerId);
+            playerData = {
+              ...formData,
+              ...kingshotData,
+            };
+          } catch (err) {
+            console.error('Failed to fetch player from API:', err);
+            alert('Failed to fetch player data from API. Please try again.');
+            return;
+          }
+        }
+
+        const newPlayer = await createPlayer(playerData);
+        setPlayers((prev) => [...prev, newPlayer].sort((a, b) => b.power - a.power));
+        upsertSessionPlayer(newPlayer);
       }
+
       setIsDialogOpen(false);
+      setSelectedPlayer(undefined);
     } catch (error) {
       console.error('Failed to save player:', error);
-      alert('Failed to save player');
+      alert(error instanceof Error ? error.message : 'Failed to save player');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -110,7 +141,6 @@ export default function PlayersPage() {
     link.click();
     document.body.removeChild(link);
   };
-
 
   if (isLoading) {
     return (
@@ -156,7 +186,6 @@ export default function PlayersPage() {
       >
         <PlayerForm
           player={selectedPlayer}
-          nextPlayerId={players.length > 0 ? (parseInt(players[players.length - 1].id) + 1) : 1}
           onSubmit={handleFormSubmit}
           onCancel={handleFormCancel}
         />
