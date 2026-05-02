@@ -132,6 +132,26 @@
   transition: all 0.2s ease;
 }
 
+.playerPhoto {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  object-fit: cover;
+  background-color: var(--bg-tertiary);
+}
+
+.noPhoto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: var(--bg-tertiary);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
 @media (max-width: 768px) {
   .table th,
   .table td {

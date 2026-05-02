@@ -32,11 +32,11 @@ export function createPlayerObject(body: any): Player {
     id: body.id,
     playerId: body.playerId,
     name: body.name,
-    alias: body.alias,
-    swordland: body.swordland,
-    triAlliance: body.triAlliance,
+    aliasName: body.aliasName,
+    swordlandPower: body.swordlandPower,
+    trialliancePower: body.trialliancePower,
     power: body.power,
-    active: true,
+    kingdomId: body.kingdomId,
   };
 }
 
@@ -49,10 +49,10 @@ export function updatePlayerObject(
     id,
     playerId: body.playerId,
     name: body.name,
-    alias: body.alias,
-    swordland: body.swordland,
-    triAlliance: body.triAlliance,
+    aliasName: body.aliasName,
+    swordlandPower: body.swordlandPower,
+    trialliancePower: body.trialliancePower,
     power: body.power,
-    active: body.active !== undefined ? body.active : currentPlayer.active,
+    kingdomId: body.kingdomId,
   };
 }

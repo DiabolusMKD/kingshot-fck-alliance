@@ -1,85 +1,172 @@
+'use client';
+
 import { Player } from '@/types';
-import playersData from '@/data/players.json';
+import { supabase } from './supabaseClient';
 
-const STORAGE_KEY = 'players_data';
-
-// Initialize localStorage with default data if not already present
-function initializeStorage() {
-  if (typeof window === 'undefined') return;
-  
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (!stored) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(playersData));
-  }
-}
-
-// Get all stored players from localStorage
-function getStoredPlayers(): Player[] {
-  if (typeof window === 'undefined') return playersData;
-  
+/**
+ * Get all active players from Supabase
+ */
+export async function getPlayers(allianceId: number, kingdomId: number): Promise<Player[]> {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : playersData;
+    const { data, error } = await supabase
+      .from('player')
+      .select('*')
+      .eq('allianceId', allianceId) // Only fetch players in the specified alliance
+      .eq('kingdomId', kingdomId) // Only fetch players from the specified kingdom
+      .order('power', { ascending: false });
+
+    if (error) {
+      throw new Error(`Failed to fetch players: ${error.message}`);
+    }
+
+    return data || [];
   } catch (error) {
-    console.error('Error reading from localStorage:', error);
-    return playersData;
+    console.error('Error fetching players:', error);
+    throw error;
   }
 }
 
-// Save players to localStorage
-function savePlayers(players: Player[]) {
-  if (typeof window === 'undefined') return;
-  
+/**
+ * Get a single player by ID from Supabase
+ */
+export async function getPlayerById(id: string): Promise<Player | null> {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
+    const { data, error } = await supabase
+      .from('player')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      throw new Error(`Failed to fetch player: ${error.message}`);
+    }
+
+    return data || null;
   } catch (error) {
-    console.error('Error saving to localStorage:', error);
+    console.error('Error fetching player:', error);
+    throw error;
   }
 }
 
-export function getPlayers(): Player[] {
-  initializeStorage();
-  return getStoredPlayers();
-}
+/**
+ * Create a new player in Supabase
+ */
+export async function createPlayer(
+  playerData: Omit<Player, 'id' | 'created_at' | 'updated_at'>
+): Promise<Player> {
+  try {
+    const { data, error } = await supabase
+      .from('player')
+      .insert([playerData])
+      .select()
+      .single();
 
-export function createPlayer(player: Player): Player {
-  initializeStorage();
-  const players = getStoredPlayers();
-  players.push(player);
-  savePlayers(players);
-  return player;
-}
+    if (error) {
+      throw new Error(`Failed to create player: ${error.message}`);
+    }
 
-export function updatePlayer(id: string, player: Omit<Player, 'id'>): Player {
-  initializeStorage();
-  const players = getStoredPlayers();
-  const playerIndex = players.findIndex((p) => p.id === id);
-  
-  if (playerIndex === -1) {
-    throw new Error('Player not found');
+    if (!data) {
+      throw new Error('No data returned from create operation');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error creating player:', error);
+    throw error;
   }
-
-  const updatedPlayer: Player = {
-    id,
-    ...player,
-    active: player.active !== undefined ? player.active : players[playerIndex].active,
-  };
-
-  players[playerIndex] = updatedPlayer;
-  savePlayers(players);
-  
-  return updatedPlayer;
 }
 
-export function deactivatePlayer(id: string): void {
-  initializeStorage();
-  const players = getStoredPlayers();
-  const playerIndex = players.findIndex((p) => p.id === id);
-  
-  if (playerIndex === -1) {
-    throw new Error('Player not found');
-  }
+/**
+ * Update a player in Supabase
+ */
+export async function updatePlayer(
+  id: string,
+  playerData: Omit<Player, 'id' | 'created_at' | 'updated_at'>
+): Promise<Player> {
+  try {
+    const { data, error } = await supabase
+      .from('player')
+      .update(playerData)
+      .eq('id', id)
+      .select()
+      .single();
 
-  players[playerIndex].active = false;
-  savePlayers(players);
+    if (error) {
+      throw new Error(`Failed to update player: ${error.message}`);
+    }
+
+    if (!data) {
+      throw new Error('No data returned from update operation');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error updating player:', error);
+    throw error;
+  }
+}
+
+/**
+ * Remove player from alliance by setting allianceId to NULL
+ */
+export async function removePlayerFromAlliance(id: string): Promise<Player> {
+  try {
+    const { data, error } = await supabase
+      .from('player')
+      .update({ allianceId: null })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(`Failed to remove player from alliance: ${error.message}`);
+    }
+
+    if (!data) {
+      throw new Error('No data returned from update operation');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error removing player from alliance:', error);
+    throw error;
+  }
+}
+
+/**
+ * Deactivate a player (soft delete) in Supabase
+ */
+export async function deactivatePlayer(id: string): Promise<void> {
+  try {
+    const { error } = await supabase
+      .from('player')
+      .update({ active: false })
+      .eq('id', id);
+
+    if (error) {
+      throw new Error(`Failed to deactivate player: ${error.message}`);
+    }
+  } catch (error) {
+    console.error('Error deactivating player:', error);
+    throw error;
+  }
+}
+
+/**
+ * Delete a player permanently from Supabase
+ */
+export async function deletePlayer(id: string): Promise<void> {
+  try {
+    const { error } = await supabase
+      .from('player')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      throw new Error(`Failed to delete player: ${error.message}`);
+    }
+  } catch (error) {
+    console.error('Error deleting player:', error);
+    throw error;
+  }
 }

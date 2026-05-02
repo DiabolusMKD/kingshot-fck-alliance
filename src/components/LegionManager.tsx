@@ -6,7 +6,7 @@ import styles from './LegionManager.module.css';
 
 interface LegionManagerProps {
   players: Player[];
-  powerKey: 'swordland' | 'triAlliance';
+  powerKey: 'swordlandPower' | 'trialliancePower';
   eventName: string;
   onSave: (legion1: Player[], legion2: Player[]) => void;
 }
@@ -21,6 +21,8 @@ export default function LegionManager({
     none: [],
     legion1: [],
     legion2: [],
+    substituteLegion1: [],
+    substituteLegion2: [],
   });
 
   const [generatedString, setGeneratedString] = useState('');
@@ -39,11 +41,13 @@ export default function LegionManager({
       none: players,
       legion1: [],
       legion2: [],
+      substituteLegion1: [],
+      substituteLegion2: [],
     });
   }, [players]);
 
   const getPowerValue = (player: Player): number => {
-    return powerKey === 'swordland' ? player.swordland : player.triAlliance;
+    return powerKey === 'swordlandPower' ? player.swordlandPower : player.trialliancePower;
   };
 
   const handlePlayerMove = (
@@ -116,7 +120,9 @@ export default function LegionManager({
                       >
                         <option value="none">None</option>
                         <option value="legion1">Legion 1</option>
+                        <option value="substituteLegion1">Substitute Legion 1</option>
                         <option value="legion2">Legion 2</option>
+                        <option value="substituteLegion2">Substitute Legion 2</option>
                       </select>
                     </td>
                   </tr>
@@ -160,7 +166,9 @@ export default function LegionManager({
                         >
                           <option value="none">None</option>
                           <option value="legion1">Legion 1</option>
+                          <option value="substituteLegion1">Substitute Legion 1</option>
                           <option value="legion2">Legion 2</option>
+                          <option value="substituteLegion2">Substitute Legion 2</option>
                         </select>
                       </td>
                     </tr>
@@ -203,6 +211,8 @@ export default function LegionManager({
                           <option value="none">None</option>
                           <option value="legion1">Legion 1</option>
                           <option value="legion2">Legion 2</option>
+                          <option value="substituteLegion1">Substitute Legion 1</option>
+                          <option value="substituteLegion2">Substitute Legion 2</option>
                         </select>
                       </td>
                     </tr>
