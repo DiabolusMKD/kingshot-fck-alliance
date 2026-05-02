@@ -6,12 +6,13 @@ import { supabase } from './supabaseClient';
 /**
  * Get all active players from Supabase
  */
-export async function getPlayers(): Promise<Player[]> {
+export async function getPlayers(allianceId: number, kingdomId: number): Promise<Player[]> {
   try {
     const { data, error } = await supabase
-      .from('players')
+      .from('player')
       .select('*')
-      .eq('active', true)
+      .eq('allianceId', allianceId) // Only fetch players in the specified alliance
+      .eq('kingdomId', kingdomId) // Only fetch players from the specified kingdom
       .order('power', { ascending: false });
 
     if (error) {
@@ -31,7 +32,7 @@ export async function getPlayers(): Promise<Player[]> {
 export async function getPlayerById(id: string): Promise<Player | null> {
   try {
     const { data, error } = await supabase
-      .from('players')
+      .from('player')
       .select('*')
       .eq('id', id)
       .single();
@@ -55,7 +56,7 @@ export async function createPlayer(
 ): Promise<Player> {
   try {
     const { data, error } = await supabase
-      .from('players')
+      .from('player')
       .insert([playerData])
       .select()
       .single();
@@ -84,7 +85,7 @@ export async function updatePlayer(
 ): Promise<Player> {
   try {
     const { data, error } = await supabase
-      .from('players')
+      .from('player')
       .update(playerData)
       .eq('id', id)
       .select()
@@ -106,12 +107,39 @@ export async function updatePlayer(
 }
 
 /**
+ * Remove player from alliance by setting allianceId to NULL
+ */
+export async function removePlayerFromAlliance(id: string): Promise<Player> {
+  try {
+    const { data, error } = await supabase
+      .from('player')
+      .update({ allianceId: null })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(`Failed to remove player from alliance: ${error.message}`);
+    }
+
+    if (!data) {
+      throw new Error('No data returned from update operation');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error removing player from alliance:', error);
+    throw error;
+  }
+}
+
+/**
  * Deactivate a player (soft delete) in Supabase
  */
 export async function deactivatePlayer(id: string): Promise<void> {
   try {
     const { error } = await supabase
-      .from('players')
+      .from('player')
       .update({ active: false })
       .eq('id', id);
 
@@ -130,7 +158,7 @@ export async function deactivatePlayer(id: string): Promise<void> {
 export async function deletePlayer(id: string): Promise<void> {
   try {
     const { error } = await supabase
-      .from('players')
+      .from('player')
       .delete()
       .eq('id', id);
 

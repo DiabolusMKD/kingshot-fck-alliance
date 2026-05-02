@@ -45,8 +45,8 @@ Expected response format:
   "playerId": "123456",
   "name": "Player Name",
   "alias": "Player Alias", 
-  "swordland": 1702,
-  "triAlliance": 232,
+  "swordlandPower": 1702,
+  "trialliancePower": 232,
   "power": 243091266
 }
 ```
@@ -75,8 +75,8 @@ CREATE TABLE IF NOT EXISTS players (
   playerId VARCHAR(255) NOT NULL,
   name VARCHAR(255) NOT NULL,
   alias VARCHAR(255),
-  swordland INTEGER DEFAULT 0,
-  triAlliance INTEGER DEFAULT 0,
+  swordlandPower INTEGER DEFAULT 0,
+  trialliancePower INTEGER DEFAULT 0,
   power BIGINT DEFAULT 0,
   active BOOLEAN DEFAULT true,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

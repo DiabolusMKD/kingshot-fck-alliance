@@ -27,8 +27,8 @@ CREATE TABLE IF NOT EXISTS players (
   playerId VARCHAR(255) NOT NULL,
   name VARCHAR(255) NOT NULL,
   alias VARCHAR(255),
-  swordland INTEGER DEFAULT 0,
-  triAlliance INTEGER DEFAULT 0,
+  swordlandPower INTEGER DEFAULT 0,
+  trialliancePower INTEGER DEFAULT 0,
   power BIGINT DEFAULT 0,
   active BOOLEAN DEFAULT true,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -55,11 +55,11 @@ NEXT_PUBLIC_KINGSHOT_API_URL=https://kingshot.net/api
 For production, enable RLS in Supabase:
 
 1. Go to **Authentication → Policies**
-2. Enable RLS on the `players` table
+2. Enable RLS on the `player` table
 3. Add a policy to allow all operations (for now):
 
 ```sql
-CREATE POLICY "Allow all operations" ON players
+CREATE POLICY "Allow all operations" ON player
   AS permissive
   FOR ALL
   USING (true)
@@ -122,8 +122,8 @@ Expected response format:
   "playerId": "121398024",
   "name": "Player Name",
   "alias": "Player Alias",
-  "swordland": 1702,
-  "triAlliance": 232,
+  "swordlandPower": 1702,
+  "trialliancePower": 232,
   "power": 243091266
 }
 ```
@@ -132,7 +132,7 @@ Expected response format:
 
 ### "Failed to load players. Please ensure Supabase credentials are set"
 - Check that `.env.local` has correct Supabase credentials
-- Ensure the `players` table exists in your database
+- Ensure the `player` table exists in your database
 - Verify the Supabase project is active
 
 ### Player data not fetching from Kingshot API

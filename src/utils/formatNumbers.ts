@@ -7,6 +7,9 @@
  *   formatNumbers(1234567.89) => "1,234,567.89"
  */
 export const formatNumbers = (num: number): string => {
+    if (isNaN(num)) {
+        return "0";
+    }
     const formatted = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     if (formatted.includes(".")) {
         const [integer, decimal] = formatted.split(".");

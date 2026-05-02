@@ -15,13 +15,12 @@ export default function SwordlandPage() {
     loadPlayers();
   }, []);
 
-  const loadPlayers = () => {
+  const loadPlayers = async () => {
     try {
       setIsLoading(true);
-      const allPlayers = getPlayers();
-      // Filter to only show active players
-      const activePlayers = allPlayers.filter((p) => p.active);
-      setPlayers(activePlayers);
+      const allPlayers = await getPlayers(1, 844); // Fetch players for FCK alliance and kingdom 1
+      const sortedPlayers = allPlayers.sort((a, b) => b.swordlandPower - a.swordlandPower);
+      setPlayers(sortedPlayers);
     } catch (error) {
       console.error('Failed to load players:', error);
       alert('Failed to load players');
@@ -36,7 +35,7 @@ export default function SwordlandPage() {
       players: legion1.map((p) => ({
         id: p.id,
         name: p.name,
-        power: p.swordland,
+        power: p.swordlandPower,
       })),
     };
 
@@ -44,7 +43,7 @@ export default function SwordlandPage() {
       players: legion2.map((p) => ({
         id: p.id,
         name: p.name,
-        power: p.swordland,
+        power: p.swordlandPower,
       })),
     };
 
@@ -79,7 +78,7 @@ export default function SwordlandPage() {
           ) : (
             <LegionManager
               players={players}
-              powerKey="swordland"
+              powerKey="swordlandPower"
               eventName="Swordland"
               onSave={handleSave}
             />

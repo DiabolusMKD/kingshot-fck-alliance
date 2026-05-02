@@ -1,8 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",
-  basePath: "",
+  // Removed 'output: export' to support dynamic API routes
   images: {
     unoptimized: true,
   },

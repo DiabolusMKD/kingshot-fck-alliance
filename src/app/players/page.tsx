@@ -4,19 +4,20 @@ import { useState, useEffect } from 'react';
 import { Player } from '@/types';
 import Navigation from '@/components/Navigation';
 import PlayersTable from '@/components/PlayersTable';
+import PlayersCard from '@/components/PlayersCard';
 import PlayerForm from '@/components/PlayerForm';
 import Dialog from '@/components/Dialog';
-import { getPlayers, createPlayer, updatePlayer, deactivatePlayer } from '@/utils/playerService';
+import { getPlayers, createPlayer, updatePlayer, removePlayerFromAlliance } from '@/utils/playerService';
 import { fetchPlayerFromKingshot } from '@/utils/kingshotApi';
 import { getSessionPlayers, setSessionPlayers, upsertSessionPlayer, removeSessionPlayer } from '@/utils/sessionStorageService';
 import styles from './page.module.css';
-import { formatNumbers } from '@/utils/formatNumbers';
 
 export default function PlayersPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | undefined>();
   const [isLoading, setIsLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
 
   useEffect(() => {
     loadPlayers();
@@ -25,9 +26,9 @@ export default function PlayersPage() {
   const loadPlayers = async () => {
     try {
       setIsLoading(true);
-      const allPlayers = await getPlayers();
+      const allPlayers = await getPlayers(1, 844); // Fetch players for FCK alliance and kingdom 1
       // Filter to only show active players and sort by power descending
-      const activePlayers = allPlayers.filter((p) => p.active).sort((a, b) => b.power - a.power);
+      const activePlayers = allPlayers.sort((a, b) => b.power - a.power);
       setPlayers(activePlayers);
       // Sync with session storage
       setSessionPlayers(activePlayers);
@@ -55,15 +56,15 @@ export default function PlayersPage() {
     setIsDialogOpen(true);
   };
 
-  const handleDeletePlayer = (playerId: string) => {
-    if (confirm('Are you sure you want to deactivate this player?')) {
+  const handleDeletePlayer = async (playerId: string) => {
+    if (confirm('Are you sure you want to remove this player from the alliance?')) {
       try {
-        deactivatePlayer(playerId);
+        await removePlayerFromAlliance(playerId);
         setPlayers((prev) => prev.filter((p) => p.id !== playerId));
         removeSessionPlayer(playerId);
       } catch (error) {
-        console.error('Failed to deactivate player:', error);
-        alert('Failed to deactivate player');
+        console.error('Failed to remove player from alliance:', error);
+        alert('Failed to remove player from alliance');
       }
     }
   };
@@ -125,9 +126,9 @@ export default function PlayersPage() {
       ...players.map((p) => [
         p.playerId,
         p.name,
-        p.alias,
-        p.swordland,
-        p.triAlliance,
+        p.aliasName,
+        p.swordlandPower,
+        p.trialliancePower,
         p.power
       ])
     ];
@@ -161,17 +162,42 @@ export default function PlayersPage() {
       <main className={styles.main}>
         <div className={styles.container}>
           <div className={styles.header}>
-            <h1 className={styles.title}>Players Management</h1>
-            <button onClick={handleAddPlayer} className={styles.addButton}>
-              + Add Player
-            </button>
+            <div className={styles.headerActions}>
+              <div className={styles.viewSwitcher}>
+                <button
+                  className={`${styles.viewButton} ${viewMode === 'table' ? styles.active : ''}`}
+                  onClick={() => setViewMode('table')}
+                  title="Table view"
+                >
+                  ⊞ Table
+                </button>
+                <button
+                  className={`${styles.viewButton} ${viewMode === 'card' ? styles.active : ''}`}
+                  onClick={() => setViewMode('card')}
+                  title="Card view"
+                >
+                  ≣ Card
+                </button>
+              </div>
+              <button onClick={handleAddPlayer} className={styles.addButton}>
+                + Add Player
+              </button>
+            </div>
           </div>
 
-          <PlayersTable
-            players={players}
-            onEdit={handleEditPlayer}
-            onDelete={handleDeletePlayer}
-          />
+          {viewMode === 'table' ? (
+            <PlayersTable
+              players={players}
+              onEdit={handleEditPlayer}
+              onDelete={handleDeletePlayer}
+            />
+          ) : (
+            <PlayersCard
+              players={players}
+              onEdit={handleEditPlayer}
+              onDelete={handleDeletePlayer}
+            />
+          )}
 
           <button className={styles.exportButton} onClick={exportToCSV}>
             Export to CSV

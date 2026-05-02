@@ -17,7 +17,7 @@ export default function PlayersTable({ players, onEdit, onDelete }: PlayersTable
   const filteredPlayers = players.filter(
     (player) =>
       player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      player.alias.toLowerCase().includes(searchTerm.toLowerCase())
+      player.aliasName.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   return (
@@ -39,6 +39,7 @@ export default function PlayersTable({ players, onEdit, onDelete }: PlayersTable
           <thead>
             <tr>
               <th>No.</th>
+              <th>Photo</th>
               <th>Player ID</th>
               <th>Name</th>
               <th>Alias</th>
@@ -52,11 +53,23 @@ export default function PlayersTable({ players, onEdit, onDelete }: PlayersTable
             {filteredPlayers.map((player) => (
               <tr key={player.id}>
                 <td>{filteredPlayers.indexOf(player) + 1}</td>
+                <td>
+                  {player.profilePhoto ? (
+                    <img
+                      src={player.profilePhoto}
+                      alt={player.name}
+                      className={styles.playerPhoto}
+                      title={player.name}
+                    />
+                  ) : (
+                    <div className={styles.noPhoto}>—</div>
+                  )}
+                </td>
                 <td>{player.playerId}</td>
                 <td>{player.name}</td>
-                <td>{player.alias}</td>
-                <td>{formatNumbers(player.swordland)}</td>
-                <td>{formatNumbers(player.triAlliance)}</td>
+                <td>{player.aliasName}</td>
+                <td>{formatNumbers(player.swordlandPower)}</td>
+                <td>{formatNumbers(player.trialliancePower)}</td>
                 <td>{formatNumbers(player.power)}</td>
                 <td>
                   <div className={styles.actions}>
