@@ -32,7 +32,7 @@ export async function fetchPlayerFromKingshot(playerId: string): Promise<Kingsho
   try {
     console.log(`Fetching player ${playerId}...`);
     // Call local Next.js API route instead of directly calling third-party API to avoid CORS
-    const response = await fetch(`/api/player-info?playerId=${playerId}`);
+    const response = await fetch(`${KINGSHOT_API_URL}/player-info?playerId=${playerId}`);
 
     let data: KingshotAPIResponse;
     try {
