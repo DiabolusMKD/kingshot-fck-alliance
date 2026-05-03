@@ -190,7 +190,7 @@ export default function PlayerForm({ player, onSubmit, onCancel }: PlayerFormPro
             onChange={handleChange}
             className={styles.input}
             placeholder="Player name"
-            readOnly
+            readOnly={fetchedFromAPI}
           />
         </div>
 
@@ -206,7 +206,7 @@ export default function PlayerForm({ player, onSubmit, onCancel }: PlayerFormPro
             onChange={handleChange}
             className={styles.input}
             placeholder="Player alias"
-            readOnly
+            readOnly={fetchedFromAPI}
           />
         </div>
 
