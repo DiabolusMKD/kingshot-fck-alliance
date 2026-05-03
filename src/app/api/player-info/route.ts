@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export const revalidate = 0;
-
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -21,7 +19,7 @@ export async function GET(request: NextRequest) {
 
     let response;
     try {
-      response = await fetch(fetchUrl);
+      response = await fetch(fetchUrl, { cache: 'no-store' });
       console.log('[API Route] Response status:', response.status);
     } catch (fetchError) {
       console.error('[API Route] Fetch failed:', fetchError);
