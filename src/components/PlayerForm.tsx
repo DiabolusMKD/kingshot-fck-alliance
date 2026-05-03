@@ -138,13 +138,13 @@ export default function PlayerForm({ player, onSubmit, onCancel }: PlayerFormPro
       return;
     }
 
-    if (!isEditMode) {
-      if (!formData.name) {
-        await handleRefetch();
-        return;
-      }
+    if (!isEditMode && !fetchedFromAPI) {
+      // Add mode: first submit should fetch the player data
+      await handleRefetch();
+      return;
     }
 
+    // Both edit and add (after fetch) modes submit here
     onSubmit(formData);
   };
 
@@ -317,26 +317,196 @@ export default function PlayerForm({ player, onSubmit, onCancel }: PlayerFormPro
         <label htmlFor="playerId" className={styles.label}>
           In-Game Player ID <span className={styles.required}>*</span>
         </label>
-        <input
-          type="text"
-          id="playerId"
-          name="playerId"
-          value={formData.playerId}
-          onChange={handleChange}
-          className={styles.input}
-          placeholder="e.g. 123123123"
-          required
-        />
+        {!fetchedFromAPI ? (
+          <input
+            type="text"
+            id="playerId"
+            name="playerId"
+            value={formData.playerId}
+            onChange={handleChange}
+            className={styles.input}
+            placeholder="e.g. 123123123"
+            required
+          />
+        ) : (
+          <input
+            type="text"
+            id="playerId"
+            name="playerId"
+            value={formData.playerId}
+            onChange={handleChange}
+            className={styles.input}
+            placeholder="e.g. 123123123"
+            readOnly
+          />
+        )}
       </div>
 
-      <div className={styles.actions}>
-        <button type="button" onClick={onCancel} className={styles.cancelButton}>
-          Cancel
-        </button>
-        <button type="submit" className={styles.submitButton} disabled={isLoading}>
-          {isLoading ? 'Adding...' : 'Add Player'}
-        </button>
-      </div>
+      {!fetchedFromAPI ? (
+        // Step 1: Only playerId, show fetch button
+        <div className={styles.actions}>
+          <button type="button" onClick={onCancel} className={styles.cancelButton}>
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className={styles.submitButton}
+            disabled={isLoading || !formData.playerId}
+          >
+            {isLoading ? 'Fetching...' : 'Fetch Player'}
+          </button>
+        </div>
+      ) : (
+        // Step 2: After fetching, show all fields
+        <>
+          <div className={styles.formGroup}>
+            <label htmlFor="name" className={styles.label}>
+              Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="Player name"
+              readOnly
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="aliasName" className={styles.label}>
+              Alias
+            </label>
+            <input
+              type="text"
+              id="aliasName"
+              name="aliasName"
+              value={formData.aliasName}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="Player alias"
+              readOnly
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="power" className={styles.label}>
+              Power
+            </label>
+            <input
+              type="number"
+              id="power"
+              name="power"
+              value={formData.power}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="0"
+              min="0"
+              readOnly
+            />
+            <small className={styles.readOnlyHint}>Read-only (from API)</small>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="swordlandPower" className={styles.label}>
+              Swordland Power
+            </label>
+            <input
+              type="number"
+              id="swordlandPower"
+              name="swordlandPower"
+              value={formData.swordlandPower}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="0"
+              min="0"
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="trialliancePower" className={styles.label}>
+              Tri Alliance Power
+            </label>
+            <input
+              type="number"
+              id="trialliancePower"
+              name="trialliancePower"
+              value={formData.trialliancePower}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="0"
+              min="0"
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="allianceId" className={styles.label}>
+              Alliance ID
+            </label>
+            <input
+              type="text"
+              id="allianceId"
+              name="allianceId"
+              value={formData.allianceId || ''}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="e.g., FCK"
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="kingdomId" className={styles.label}>
+              Kingdom ID
+            </label>
+            <input
+              type="number"
+              id="kingdomId"
+              name="kingdomId"
+              value={formData.kingdomId}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="0"
+              min="0"
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="profilePhoto" className={styles.label}>
+              Profile Photo URL
+            </label>
+            <input
+              type="text"
+              id="profilePhoto"
+              name="profilePhoto"
+              value={formData.profilePhoto}
+              onChange={handleChange}
+              className={styles.input}
+              placeholder="https://example.com/photo.jpg"
+            />
+          </div>
+
+          <div className={styles.actions}>
+            <button
+              type="button"
+              onClick={() => {
+                setFetchedFromAPI(false);
+                setError(null);
+              }}
+              className={styles.cancelButton}
+            >
+              Back
+            </button>
+            <button type="button" onClick={onCancel} className={styles.cancelButton}>
+              Cancel
+            </button>
+            <button type="submit" className={styles.submitButton} disabled={isLoading}>
+              {isLoading ? 'Adding...' : 'Add Player'}
+            </button>
+          </div>
+        </>
+      )}
     </form>
   );
 }

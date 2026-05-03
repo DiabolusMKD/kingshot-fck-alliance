@@ -32,7 +32,7 @@ export default function LegionManager({
     return playerList.filter(
       (player) =>
         player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        player.id.toLowerCase().includes(searchTerm.toLowerCase())
+        player.aliasName.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 
