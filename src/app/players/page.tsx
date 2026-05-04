@@ -12,6 +12,9 @@ import { fetchPlayerFromKingshot } from '@/utils/kingshotApi';
 import { getSessionPlayers, setSessionPlayers, upsertSessionPlayer, removeSessionPlayer } from '@/utils/sessionStorageService';
 import styles from './page.module.css';
 
+const allianceId = 1; // FCK alliance ID
+const kingdomId = 844; // Kingdom ID to filter players by
+
 export default function PlayersPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -26,7 +29,7 @@ export default function PlayersPage() {
   const loadPlayers = async () => {
     try {
       setIsLoading(true);
-      const allPlayers = await getPlayers(1, 844); // Fetch players for FCK alliance and kingdom 1
+      const allPlayers = await getPlayers(allianceId, kingdomId); // Fetch players for FCK alliance and specified kingdom
       // Filter to only show active players and sort by power descending
       const activePlayers = allPlayers.sort((a, b) => b.power - a.power);
       setPlayers(activePlayers);
@@ -85,6 +88,7 @@ export default function PlayersPage() {
       } else {
         // Add new player - fetch from API first if we only have playerId
         let playerData = formData;
+        playerData.allianceId = `${allianceId}`; // Ensure allianceId is set for new players
 
         if (!formData.name) {
           try {

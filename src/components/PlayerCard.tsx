@@ -41,12 +41,6 @@ export default function PlayerCard({ player, onEdit, onDelete }: PlayerCardProps
           <span className={styles.label}>Power</span>
           <span className={styles.value}>{formatNumbers(player.power)}</span>
         </div>
-        {player.allianceId && (
-          <div className={styles.stat}>
-            <span className={styles.label}>Alliance</span>
-            <span className={styles.value}>{player.allianceId}</span>
-          </div>
-        )}
         {player.kingdomId && (
           <div className={styles.stat}>
             <span className={styles.label}>Kingdom</span>

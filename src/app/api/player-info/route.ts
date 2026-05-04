@@ -19,16 +19,48 @@ export async function GET(request: NextRequest) {
 
     let response;
     try {
-      response = await fetch(fetchUrl, { cache: 'no-store' });
+      // Add timeout to prevent hanging on Vercel
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      
+      response = await fetch(fetchUrl, { 
+        cache: 'no-store',
+        signal: controller.signal,
+        headers: {
+          'User-Agent': 'kingshot-fck-alliance/1.0'
+        }
+      });
+      clearTimeout(timeout);
       console.log('[API Route] Response status:', response.status);
     } catch (fetchError) {
       console.error('[API Route] Fetch failed:', fetchError);
+      const errorMsg = fetchError instanceof Error ? fetchError.message : 'Unknown error';
       return NextResponse.json(
         { 
-          error: `Failed to reach Kingshot API: ${fetchError instanceof Error ? fetchError.message : 'Unknown error'}`,
+          error: `Failed to reach Kingshot API: ${errorMsg}`,
           status: 'error'
         },
         { status: 503 }
+      );
+    }
+
+    // Check HTTP status first before parsing JSON
+    if (!response.ok) {
+      let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+      let errorText = '';
+      try {
+        errorText = await response.text();
+        console.error('[API Route] Non-OK response text:', errorText.substring(0, 500));
+        // Try to parse as JSON if possible
+        const errorData = JSON.parse(errorText);
+        errorMessage = errorData.message || errorMessage;
+      } catch (e) {
+        // Response is not JSON, use default message
+        console.error('[API Route] Non-JSON error response:', errorText.substring(0, 200));
+      }
+      return NextResponse.json(
+        { error: errorMessage, status: 'error' },
+        { status: response.status }
       );
     }
 
@@ -39,7 +71,11 @@ export async function GET(request: NextRequest) {
     } catch (parseError) {
       console.error('[API Route] JSON parse error:', parseError);
       return NextResponse.json(
-        { error: 'Failed to parse Kingshot API response', status: 'error' },
+        { 
+          error: 'Failed to parse Kingshot API response - received non-JSON content',
+          status: 'error',
+          details: process.env.NODE_ENV === 'development' ? 'Check server logs for details' : undefined
+        },
         { status: 502 }
       );
     }
@@ -51,15 +87,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { error: errorMessage, status: 'error' },
         { status: 400 }
-      );
-    }
-
-    if (!response.ok) {
-      const errorMessage = data.message || `API error: ${response.statusText}`;
-      console.error('[API Route] Non-OK HTTP:', response.status, errorMessage);
-      return NextResponse.json(
-        { error: errorMessage, status: 'error' },
-        { status: response.status || 400 }
       );
     }
 
