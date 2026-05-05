@@ -26,7 +26,6 @@ export default function TriAlliancePage() {
   const [selectedEvent, setSelectedEvent] = useState<AllianceEvent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [isCreatingEvent, setIsCreatingEvent] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -51,22 +50,16 @@ export default function TriAlliancePage() {
     }
   };
 
-  const handleCreateEvent = async () => {
-    setIsCreatingEvent(true);
-    try {
-      const newEvent = await createAllianceEvent({
-        allianceId: ALLIANCE_ID,
-        eventId: EVENT_ID,
-        status: 'not-started' as EventStatus,
-        startsAt: new Date().toISOString(),
-      });
-      setSelectedEvent(newEvent);
-    } catch (error) {
-      console.error('Failed to create event:', error);
-      alert('Failed to create event');
-    } finally {
-      setIsCreatingEvent(false);
-    }
+  const handleCreateEvent = () => {
+    // Create a temporary event object without saving to DB yet
+    const tempEvent: AllianceEvent = {
+      allianceId: ALLIANCE_ID,
+      eventId: EVENT_ID,
+      status: 'not-started' as EventStatus,
+      startsAt: new Date().toISOString(),
+      assignments: undefined,
+    };
+    setSelectedEvent(tempEvent);
   };
 
   const handleSaveAssignments = async (assignments: PlayerAssignment[]) => {
@@ -75,18 +68,29 @@ export default function TriAlliancePage() {
     setIsSaving(true);
     try {
       const serialized = serializeAssignments(assignments);
-      await updateAllianceEvent(selectedEvent.id!, {
-        assignments: serialized,
-        updatedAt: new Date().toISOString(),
-      });
 
-      // Update local state
-      setSelectedEvent((prev) => {
-        if (!prev) return prev;
-        return { ...prev, assignments: serialized };
-      });
+      let savedEvent: AllianceEvent;
 
-      // Refresh events list
+      // If event has no ID, it's new and needs to be created first
+      if (!selectedEvent.id) {
+        const newEvent = await createAllianceEvent({
+          allianceId: selectedEvent.allianceId,
+          eventId: selectedEvent.eventId,
+          status: selectedEvent.status,
+          startsAt: selectedEvent.startsAt,
+          assignments: serialized,
+        });
+        savedEvent = newEvent;
+      } else {
+        // Update existing event
+        const updated = await updateAllianceEvent(selectedEvent.id, {
+          assignments: serialized,
+          updatedAt: new Date().toISOString(),
+        });
+        savedEvent = updated;
+      }
+
+      setSelectedEvent(savedEvent);
       await loadData();
       alert('Event saved successfully!');
     } catch (error) {
@@ -145,9 +149,9 @@ export default function TriAlliancePage() {
                 <button
                   onClick={handleCreateEvent}
                   className={styles.createButton}
-                  disabled={isCreatingEvent || isLoading}
+                  disabled={isLoading}
                 >
-                  {isCreatingEvent ? 'Creating...' : '+ Create New Event'}
+                  + Create New Event
                 </button>
               </div>
 
