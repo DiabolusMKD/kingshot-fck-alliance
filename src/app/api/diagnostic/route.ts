@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
  * Diagnostic endpoint to check external API connectivity and configuration
  * Useful for troubleshooting Vercel deployment issues
  */
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   const kingshotApiUrl = process.env.NEXT_PUBLIC_KINGSHOT_API_URL || 'https://kingshot.net/api';
   const testPlayerId = '1'; // Use a generic player ID for testing
 
