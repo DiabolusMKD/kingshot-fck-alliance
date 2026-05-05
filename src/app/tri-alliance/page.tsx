@@ -1,64 +1,119 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Player } from '@/types';
+import { Player, AllianceEvent, PlayerAssignment, EventStatus } from '@/types';
 import Navigation from '@/components/Navigation';
-import LegionManager from '@/components/LegionManager';
+import EventHero from '@/components/EventHero';
+import TriAllianceEventLayout from '@/components/TriAllianceEventLayout';
+import EventList from '@/components/EventList';
 import { getPlayers } from '@/utils/playerService';
+import {
+  getAllianceEvents,
+  createAllianceEvent,
+  updateAllianceEvent,
+  deleteAllianceEvent,
+  serializeAssignments,
+  deserializeAssignments,
+} from '@/utils/eventService';
 import styles from './page.module.css';
+
+const ALLIANCE_ID = 1;
+const EVENT_ID = 2; // Tri Alliance event ID
 
 export default function TriAlliancePage() {
   const [players, setPlayers] = useState<Player[]>([]);
+  const [events, setEvents] = useState<AllianceEvent[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<AllianceEvent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isCreatingEvent, setIsCreatingEvent] = useState(false);
 
   useEffect(() => {
-    loadPlayers();
+    loadData();
   }, []);
 
-  const loadPlayers = async () => {
+  const loadData = async () => {
     try {
       setIsLoading(true);
-      const allPlayers = await getPlayers(1, 844); // Fetch players for FCK alliance and kingdom 1
-      const sortedPlayers = allPlayers.sort((a, b) => b.trialliancePower - a.trialliancePower);
+      const [playersData, eventsData] = await Promise.all([
+        getPlayers(ALLIANCE_ID, 844),
+        getAllianceEvents(ALLIANCE_ID, EVENT_ID),
+      ]);
+
+      const sortedPlayers = playersData.sort((a, b) => b.trialliancePower - a.trialliancePower);
       setPlayers(sortedPlayers);
+      setEvents(eventsData);
     } catch (error) {
-      console.error('Failed to load players:', error);
-      alert('Failed to load players');
+      console.error('Failed to load data:', error);
+      alert('Failed to load data');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSave = async (legion1: Player[], legion2: Player[]) => {
-    // Create the legion data structure
-    const triAllianceLegion1 = {
-      players: legion1.map((p) => ({
-        id: p.id,
-        name: p.name,
-        power: p.trialliancePower,
-      })),
-    };
+  const handleCreateEvent = async () => {
+    setIsCreatingEvent(true);
+    try {
+      const newEvent = await createAllianceEvent({
+        allianceId: ALLIANCE_ID,
+        eventId: EVENT_ID,
+        status: 'not-started' as EventStatus,
+        startsAt: new Date().toISOString(),
+      });
+      setSelectedEvent(newEvent);
+    } catch (error) {
+      console.error('Failed to create event:', error);
+      alert('Failed to create event');
+    } finally {
+      setIsCreatingEvent(false);
+    }
+  };
 
-    const triAllianceLegion2 = {
-      players: legion2.map((p) => ({
-        id: p.id,
-        name: p.name,
-        power: p.trialliancePower,
-      })),
-    };
+  const handleSaveAssignments = async (assignments: PlayerAssignment[]) => {
+    if (!selectedEvent) return;
 
-    // In a real app, this would save to the backend or download files
-    console.log('Saving Tri Alliance Legion 1:', triAllianceLegion1);
-    console.log('Saving Tri Alliance Legion 2:', triAllianceLegion2);
+    setIsSaving(true);
+    try {
+      const serialized = serializeAssignments(assignments);
+      await updateAllianceEvent(selectedEvent.id!, {
+        assignments: serialized,
+        updatedAt: new Date().toISOString(),
+      });
 
-    // For now, we'll just alert the user
-    alert(
-      `Tri Alliance configuration saved!\nLegion 1: ${legion1.length} players\nLegion 2: ${legion2.length} players`
-    );
+      // Update local state
+      setSelectedEvent((prev) => {
+        if (!prev) return prev;
+        return { ...prev, assignments: serialized };
+      });
 
-    // In the future, you could trigger a file download:
-    // downloadJSON(triAllianceLegion1, 'tri-alliance-legion1.json');
-    // downloadJSON(triAllianceLegion2, 'tri-alliance-legion2.json');
+      // Refresh events list
+      await loadData();
+      alert('Event saved successfully!');
+    } catch (error) {
+      console.error('Failed to save event:', error);
+      alert('Failed to save event');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDeleteEvent = async (eventId: number) => {
+    if (!confirm('Are you sure you want to delete this event?')) return;
+
+    try {
+      await deleteAllianceEvent(eventId);
+      setEvents((prev) => prev.filter((e) => e.id !== eventId));
+      if (selectedEvent?.id === eventId) {
+        setSelectedEvent(null);
+      }
+    } catch (error) {
+      console.error('Failed to delete event:', error);
+      alert('Failed to delete event');
+    }
+  };
+
+  const handleBackToList = () => {
+    setSelectedEvent(null);
   };
 
   return (
@@ -66,22 +121,47 @@ export default function TriAlliancePage() {
       <Navigation />
       <main className={styles.main}>
         <div className={styles.container}>
-          <div className={styles.header}>
-            <h1 className={styles.title}>Tri Alliance Event Management</h1>
-            <p className={styles.subtitle}>
-              Organize players into alliances for Tri Alliance events
-            </p>
-          </div>
-
-          {isLoading ? (
-            <p>Loading players...</p>
+          {selectedEvent ? (
+            // Event Editor View
+            <>
+              <div className={styles.header}>
+                <button onClick={handleBackToList} className={styles.backButton}>
+                  ← Back to Events
+                </button>
+              </div>
+              <EventHero eventType="tri-alliance" />
+              <TriAllianceEventLayout
+                players={players}
+                initialAssignments={deserializeAssignments(selectedEvent.assignments || null)}
+                onSave={handleSaveAssignments}
+                isSaving={isSaving}
+              />
+            </>
           ) : (
-            <LegionManager
-              players={players}
-              powerKey="trialliancePower"
-              eventName="Tri Alliance"
-              onSave={handleSave}
-            />
+            // Events List View
+            <>
+              <div className={styles.header}>
+                <h1 className={styles.title}>Tri Alliance Event Management</h1>
+                <button
+                  onClick={handleCreateEvent}
+                  className={styles.createButton}
+                  disabled={isCreatingEvent || isLoading}
+                >
+                  {isCreatingEvent ? 'Creating...' : '+ Create New Event'}
+                </button>
+              </div>
+
+              {isLoading ? (
+                <p>Loading...</p>
+              ) : (
+                <EventList
+                  events={events}
+                  onEventClick={setSelectedEvent}
+                  onDeleteEvent={handleDeleteEvent}
+                  isLoading={false}
+                />
+              )}
+            </>
           )}
         </div>
       </main>

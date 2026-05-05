@@ -19,18 +19,13 @@ export async function GET(request: NextRequest) {
 
     let response;
     try {
-      // Add timeout to prevent hanging on Vercel
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 10000); // 10 second timeout
       
       response = await fetch(fetchUrl, { 
         cache: 'no-store',
-        signal: controller.signal,
         headers: {
           'User-Agent': 'kingshot-fck-alliance/1.0'
         }
       });
-      clearTimeout(timeout);
       console.log('[API Route] Response status:', response.status);
     } catch (fetchError) {
       console.error('[API Route] Fetch failed:', fetchError);

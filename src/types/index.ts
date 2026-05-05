@@ -32,3 +32,47 @@ export interface AllianceLegion {
   legion1: Player[];
   legion2: Player[];
 }
+
+// Event Management Types
+export type EventType = 'swordland' | 'tri-alliance';
+export type EventStatus = 'not-started' | 'ongoing' | 'completed';
+
+export interface AllianceEvent {
+  id?: number;
+  allianceId: number;
+  eventId: number;
+  startsAt?: string;
+  rules?: string;
+  status: EventStatus;
+  notes?: string;
+  assignments?: string; // JSON string of assignments
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface EventPlayer {
+  id?: number;
+  playerId: number;
+  didShowUp?: boolean;
+  score?: number;
+  notes?: string;
+  alliance_event_id: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// Assignment structure for storing legion assignments
+export interface PlayerAssignment {
+  playerId: string;
+  legion: string; // 'legion1', 'legion2', 'building1', 'building2', etc.
+  name: string;
+  power: number;
+}
+
+export interface EventAssignments {
+  eventType: EventType;
+  eventId?: number;
+  assignments: PlayerAssignment[];
+  createdAt?: string;
+  updatedAt?: string;
+}
