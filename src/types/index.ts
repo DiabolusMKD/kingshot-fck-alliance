@@ -34,8 +34,8 @@ export interface AllianceLegion {
 }
 
 // Event Management Types
-export type EventType = 'swordland' | 'tri-alliance';
-export type EventStatus = 'not-started' | 'ongoing' | 'completed';
+export type EventType = "swordland" | "tri-alliance";
+export type EventStatus = "not-started" | "ongoing" | "completed";
 
 export interface AllianceEvent {
   id?: number;
@@ -67,6 +67,7 @@ export interface PlayerAssignment {
   legion: string; // 'legion1', 'legion2', 'building1', 'building2', etc.
   name: string;
   power: number;
+  triAlliancePower: number;
 }
 
 export interface EventAssignments {

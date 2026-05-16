@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Player, Legion } from '@/types';
-import styles from './LegionManager.module.css';
+import { useState, useEffect } from "react";
+import { Player, Legion } from "@/types";
+import styles from "./LegionManager.module.css";
 
 interface LegionManagerProps {
   players: Player[];
-  powerKey: 'swordlandPower' | 'trialliancePower';
+  powerKey: "swordlandPower" | "trialliancePower";
   eventName: string;
   onSave: (legion1: Player[], legion2: Player[]) => void;
 }
@@ -25,14 +25,14 @@ export default function LegionManager({
     substituteLegion2: [],
   });
 
-  const [generatedString, setGeneratedString] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [generatedString, setGeneratedString] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const filterPlayersBySearch = (playerList: Player[]): Player[] => {
     return playerList.filter(
       (player) =>
         player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        player.aliasName.toLowerCase().includes(searchTerm.toLowerCase())
+        player.aliasName.toLowerCase().includes(searchTerm.toLowerCase()),
     );
   };
 
@@ -47,13 +47,15 @@ export default function LegionManager({
   }, [players]);
 
   const getPowerValue = (player: Player): number => {
-    return powerKey === 'swordlandPower' ? player.swordlandPower : player.trialliancePower;
+    return powerKey === "swordlandPower"
+      ? player.swordlandPower
+      : player.trialliancePower;
   };
 
   const handlePlayerMove = (
     playerId: string,
     fromLegion: keyof Legion,
-    toLegion: keyof Legion
+    toLegion: keyof Legion,
   ) => {
     const player = legions[fromLegion].find((p) => p.id === playerId);
     if (!player) return;
@@ -66,14 +68,32 @@ export default function LegionManager({
   };
 
   const handleGenerateString = () => {
-    const legion1String = legions.legion1
-      .map((p) => `${p.name}:${getPowerValue(p)}`)
-      .join(' | ');
-    const legion2String = legions.legion2
-      .map((p) => `${p.name}:${getPowerValue(p)}`)
-      .join(' | ');
+    const splitLegion = (players: Player[]) => {
+      const middleIndex = Math.floor(players.length / 2);
 
-    const fullString = `${eventName} - Legion 1: ${legion1String || 'None'}\n${eventName} - Legion 2: ${legion2String || 'None'}`;
+      // If odd, support gets more players
+      const offense = players.slice(0, middleIndex);
+      const support = players.slice(middleIndex);
+
+      return { offense, support };
+    };
+
+    const legion1Split = splitLegion(legions.legion1);
+    const legion2Split = splitLegion(legions.legion2);
+
+    const formatPlayers = (players: Player[]) =>
+      players.map((p) => p.name).join(", ") || "None";
+
+    const fullString = `Legion 1 assignments:
+OFFENSE: ${formatPlayers(legion1Split.offense)}
+SUPPORT: ${formatPlayers(legion1Split.support)}
+Substitutes: ${formatPlayers(legions.substituteLegion1)}
+
+Legion 2 assignments:
+OFFENSE: ${formatPlayers(legion2Split.offense)}
+SUPPORT: ${formatPlayers(legion2Split.support)}
+Substitutes: ${formatPlayers(legions.substituteLegion2)}`;
+
     setGeneratedString(fullString);
   };
 
@@ -114,15 +134,23 @@ export default function LegionManager({
                       <select
                         value="none"
                         onChange={(e) =>
-                          handlePlayerMove(player.id, 'none', e.target.value as keyof Legion)
+                          handlePlayerMove(
+                            player.id,
+                            "none",
+                            e.target.value as keyof Legion,
+                          )
                         }
                         className={styles.select}
                       >
                         <option value="none">None</option>
                         <option value="legion1">Legion 1</option>
-                        <option value="substituteLegion1">Substitute Legion 1</option>
+                        <option value="substituteLegion1">
+                          Substitute Legion 1
+                        </option>
                         <option value="legion2">Legion 2</option>
-                        <option value="substituteLegion2">Substitute Legion 2</option>
+                        <option value="substituteLegion2">
+                          Substitute Legion 2
+                        </option>
                       </select>
                     </td>
                   </tr>
@@ -131,7 +159,9 @@ export default function LegionManager({
             </table>
             {filterPlayersBySearch(legions.none).length === 0 && (
               <div className={styles.emptyMessage}>
-                {searchTerm ? 'No players match your search.' : 'No unassigned players'}
+                {searchTerm
+                  ? "No players match your search."
+                  : "No unassigned players"}
               </div>
             )}
           </div>
@@ -160,15 +190,23 @@ export default function LegionManager({
                         <select
                           value="legion1"
                           onChange={(e) =>
-                            handlePlayerMove(player.id, 'legion1', e.target.value as keyof Legion)
+                            handlePlayerMove(
+                              player.id,
+                              "legion1",
+                              e.target.value as keyof Legion,
+                            )
                           }
                           className={styles.select}
                         >
                           <option value="none">None</option>
                           <option value="legion1">Legion 1</option>
-                          <option value="substituteLegion1">Substitute Legion 1</option>
+                          <option value="substituteLegion1">
+                            Substitute Legion 1
+                          </option>
                           <option value="legion2">Legion 2</option>
-                          <option value="substituteLegion2">Substitute Legion 2</option>
+                          <option value="substituteLegion2">
+                            Substitute Legion 2
+                          </option>
                         </select>
                       </td>
                     </tr>
@@ -177,7 +215,9 @@ export default function LegionManager({
               </table>
               {filterPlayersBySearch(legions.legion1).length === 0 && (
                 <div className={styles.emptyMessage}>
-                  {searchTerm ? 'No players match your search.' : 'No players assigned'}
+                  {searchTerm
+                    ? "No players match your search."
+                    : "No players assigned"}
                 </div>
               )}
             </div>
@@ -204,15 +244,23 @@ export default function LegionManager({
                         <select
                           value="legion2"
                           onChange={(e) =>
-                            handlePlayerMove(player.id, 'legion2', e.target.value as keyof Legion)
+                            handlePlayerMove(
+                              player.id,
+                              "legion2",
+                              e.target.value as keyof Legion,
+                            )
                           }
                           className={styles.select}
                         >
                           <option value="none">None</option>
                           <option value="legion1">Legion 1</option>
                           <option value="legion2">Legion 2</option>
-                          <option value="substituteLegion1">Substitute Legion 1</option>
-                          <option value="substituteLegion2">Substitute Legion 2</option>
+                          <option value="substituteLegion1">
+                            Substitute Legion 1
+                          </option>
+                          <option value="substituteLegion2">
+                            Substitute Legion 2
+                          </option>
                         </select>
                       </td>
                     </tr>
@@ -221,7 +269,9 @@ export default function LegionManager({
               </table>
               {filterPlayersBySearch(legions.legion2).length === 0 && (
                 <div className={styles.emptyMessage}>
-                  {searchTerm ? 'No players match your search.' : 'No players assigned'}
+                  {searchTerm
+                    ? "No players match your search."
+                    : "No players assigned"}
                 </div>
               )}
             </div>
@@ -231,7 +281,10 @@ export default function LegionManager({
 
       {/* Actions */}
       <div className={styles.actions}>
-        <button onClick={handleGenerateString} className={styles.generateButton}>
+        <button
+          onClick={handleGenerateString}
+          className={styles.generateButton}
+        >
           Generate String
         </button>
         <button onClick={handleSave} className={styles.saveButton}>
