@@ -34,6 +34,8 @@ export default function TriAllianceEventLayout({
   });
 
   const [generatedString, setGeneratedString] = useState("");
+  const [generatedJson, setGeneratedJson] = useState("");
+  const [jsonInput, setJsonInput] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -171,6 +173,22 @@ RIGHT SUPPORT: ${formatPlayers(legion2.rightSupport)}
 Substitutes: ${formatPlayers(assignments.substituteLegion2)}`;
 
     setGeneratedString(fullString);
+
+    // Generate JSON
+    const jsonData = {
+      legion1: {
+        leftOffense: assignments.legion1.slice(0, Math.floor(assignments.legion1.length / 2)).map((p) => ({ id: p.id, name: p.name, power: p.power })),
+        rightOffense: assignments.legion1.slice(Math.floor(assignments.legion1.length / 2), Math.floor(assignments.legion1.length / 2) * 2).map((p) => ({ id: p.id, name: p.name, power: p.power })),
+        substitutes: assignments.substituteLegion1.map((p) => ({ id: p.id, name: p.name, power: p.power })),
+      },
+      legion2: {
+        leftOffense: assignments.legion2.slice(0, Math.floor(assignments.legion2.length / 2)).map((p) => ({ id: p.id, name: p.name, power: p.power })),
+        rightOffense: assignments.legion2.slice(Math.floor(assignments.legion2.length / 2), Math.floor(assignments.legion2.length / 2) * 2).map((p) => ({ id: p.id, name: p.name, power: p.power })),
+        substitutes: assignments.substituteLegion2.map((p) => ({ id: p.id, name: p.name, power: p.power })),
+      },
+    };
+
+    setGeneratedJson(JSON.stringify(jsonData, null, 2));
   };
 
   const handleReset = () => {
@@ -183,7 +201,89 @@ Substitutes: ${formatPlayers(assignments.substituteLegion2)}`;
     });
 
     setGeneratedString("");
+    setGeneratedJson("");
+    setJsonInput("");
     setSearchTerm("");
+  };
+
+  const handleJsonImport = () => {
+    try {
+      const parsed = JSON.parse(jsonInput);
+
+      // Validate JSON structure
+      if (!parsed.legion1 || !parsed.legion2) {
+        alert("Invalid JSON format. Expected legion1 and legion2 fields.");
+        return;
+      }
+
+      // Extract player IDs from the JSON and find matching players
+      const extractPlayers = (legionData: any): string[] => {
+        const playerIds: string[] = [];
+
+        if (legionData.leftOffense) {
+          playerIds.push(...legionData.leftOffense.map((p: any) => p.id));
+        }
+        if (legionData.rightOffense) {
+          playerIds.push(...legionData.rightOffense.map((p: any) => p.id));
+        }
+        if (legionData.substitutes) {
+          playerIds.push(...legionData.substitutes.map((p: any) => p.id));
+        }
+
+        return playerIds;
+      };
+
+      const legion1Ids = extractPlayers(parsed.legion1);
+      const legion2Ids = extractPlayers(parsed.legion2);
+      const allImportedIds = new Set([...legion1Ids, ...legion2Ids]);
+
+      const newAssignments: LegionAssignments = {
+        legion1: [],
+        legion2: [],
+        substituteLegion1: [],
+        substituteLegion2: [],
+        unassigned: [],
+      };
+
+      // Assign players based on imported data
+      players.forEach((player) => {
+        if (legion1Ids.includes(player.id)) {
+          newAssignments.legion1.push(player);
+        } else if (legion2Ids.includes(player.id)) {
+          newAssignments.legion2.push(player);
+        } else {
+          newAssignments.unassigned.push(player);
+        }
+      });
+
+      // Handle substitutes if present in the JSON
+      if (parsed.legion1.substitutes && Array.isArray(parsed.legion1.substitutes)) {
+        const substituteIds = parsed.legion1.substitutes.map((p: any) => p.id);
+        newAssignments.substituteLegion1 = newAssignments.legion1.filter((p) =>
+          substituteIds.includes(p.id),
+        );
+        newAssignments.legion1 = newAssignments.legion1.filter(
+          (p) => !substituteIds.includes(p.id),
+        );
+      }
+
+      if (parsed.legion2.substitutes && Array.isArray(parsed.legion2.substitutes)) {
+        const substituteIds = parsed.legion2.substitutes.map((p: any) => p.id);
+        newAssignments.substituteLegion2 = newAssignments.legion2.filter((p) =>
+          substituteIds.includes(p.id),
+        );
+        newAssignments.legion2 = newAssignments.legion2.filter(
+          (p) => !substituteIds.includes(p.id),
+        );
+      }
+
+      setAssignments(newAssignments);
+      setJsonInput("");
+      alert("JSON imported successfully!");
+    } catch (error) {
+      alert("Invalid JSON format. Please check and try again.");
+      console.error("JSON import error:", error);
+    }
   };
 
   const handleSave = async () => {
@@ -368,6 +468,42 @@ Substitutes: ${formatPlayers(assignments.substituteLegion2)}`;
           />
         </div>
       )}
+
+      {/* Generated JSON TextArea */}
+      {generatedJson && (
+        <div className={styles.textAreaWrapper}>
+          <label htmlFor="generatedJson" className={styles.label}>
+            Generated JSON
+          </label>
+          <textarea
+            id="generatedJson"
+            value={generatedJson}
+            readOnly
+            className={styles.textarea}
+          />
+        </div>
+      )}
+
+      {/* JSON Import Section */}
+      <div className={styles.textAreaWrapper}>
+        <label htmlFor="jsonInput" className={styles.label}>
+          Import JSON (Paste JSON to load assignments)
+        </label>
+        <textarea
+          id="jsonInput"
+          value={jsonInput}
+          onChange={(e) => setJsonInput(e.target.value)}
+          className={styles.textarea}
+          placeholder="Paste JSON here..."
+        />
+        <button
+          onClick={handleJsonImport}
+          className={styles.generateButton}
+          disabled={!jsonInput.trim()}
+        >
+          Load JSON
+        </button>
+      </div>
     </div>
   );
 }

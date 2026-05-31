@@ -16,7 +16,8 @@ export default function Home() {
               src="https://img.itch.zone/aW1nLzIwOTY0NTQ5LnBuZw==/original/TIvBF4.png"
               alt="FCK Alliance"
               className={styles.image}
-              fill={true}
+              width={300}
+              height={200}
             />
             <h1 className={styles.title}>Welcome to FCK Alliance</h1>
             <p className={styles.description}>

@@ -20,10 +20,16 @@ import styles from './page.module.css';
 const ALLIANCE_ID = 1;
 const EVENT_ID = 1; // Swordland event ID
 
+interface EventFormData {
+  startsAt: string;
+}
+
 export default function SwordlandPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [events, setEvents] = useState<AllianceEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<AllianceEvent | null>(null);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [formData, setFormData] = useState<EventFormData>({ startsAt: '' });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -50,16 +56,43 @@ export default function SwordlandPage() {
     }
   };
 
-  const handleCreateEvent = () => {
-    // Create a temporary event object without saving to DB yet
-    const tempEvent: AllianceEvent = {
-      allianceId: ALLIANCE_ID,
-      eventId: EVENT_ID,
-      status: 'not-started' as EventStatus,
-      startsAt: new Date().toISOString(),
-      assignments: undefined,
-    };
-    setSelectedEvent(tempEvent);
+  const handleCreateEventClick = () => {
+    setShowCreateForm(true);
+    setFormData({ startsAt: '' });
+  };
+
+  const handleFormCancel = () => {
+    setShowCreateForm(false);
+    setFormData({ startsAt: '' });
+  };
+
+  const handleFormSubmit = async () => {
+    if (!formData.startsAt) {
+      alert('Please select a date and time');
+      return;
+    }
+
+    try {
+      // Convert datetime-local to UTC
+      const localDate = new Date(formData.startsAt);
+      const utcString = localDate.toISOString();
+
+      // Create new event with UTC datetime
+      const newEvent = await createAllianceEvent({
+        allianceId: ALLIANCE_ID,
+        eventId: EVENT_ID,
+        status: 'not-started' as EventStatus,
+        startsAt: utcString,
+        assignments: undefined,
+      });
+
+      setSelectedEvent(newEvent);
+      setShowCreateForm(false);
+      setFormData({ startsAt: '' });
+    } catch (error) {
+      console.error('Failed to create event:', error);
+      alert('Failed to create event');
+    }
   };
 
   const handleSaveAssignments = async (assignments: PlayerAssignment[]) => {
@@ -69,28 +102,12 @@ export default function SwordlandPage() {
     try {
       const serialized = serializeAssignments(assignments);
 
-      let savedEvent: AllianceEvent;
+      const updated = await updateAllianceEvent(selectedEvent.id!, {
+        assignments: serialized,
+        updatedAt: new Date().toISOString(),
+      });
 
-      // If event has no ID, it's new and needs to be created first
-      if (!selectedEvent.id) {
-        const newEvent = await createAllianceEvent({
-          allianceId: selectedEvent.allianceId,
-          eventId: selectedEvent.eventId,
-          status: selectedEvent.status,
-          startsAt: selectedEvent.startsAt,
-          assignments: serialized,
-        });
-        savedEvent = newEvent;
-      } else {
-        // Update existing event
-        const updated = await updateAllianceEvent(selectedEvent.id, {
-          assignments: serialized,
-          updatedAt: new Date().toISOString(),
-        });
-        savedEvent = updated;
-      }
-
-      setSelectedEvent(savedEvent);
+      setSelectedEvent(updated);
       await loadData();
       alert('Event saved successfully!');
     } catch (error) {
@@ -125,7 +142,37 @@ export default function SwordlandPage() {
       <Navigation />
       <main className={styles.main}>
         <div className={styles.container}>
-          {selectedEvent ? (
+          {showCreateForm ? (
+            // Create Event Form
+            <div className={styles.formModal}>
+              <div className={styles.formContent}>
+                <h2>Create New Swordland Event</h2>
+                <p>Choose a date and time for this event (will be stored as UTC)</p>
+
+                <div className={styles.formGroup}>
+                  <label htmlFor="startsAt">Event Date & Time</label>
+                  <input
+                    id="startsAt"
+                    type="datetime-local"
+                    value={formData.startsAt}
+                    onChange={(e) =>
+                      setFormData({ ...formData, startsAt: e.target.value })
+                    }
+                    className={styles.formInput}
+                  />
+                </div>
+
+                <div className={styles.formActions}>
+                  <button onClick={handleFormCancel} className={styles.cancelButton}>
+                    Cancel
+                  </button>
+                  <button onClick={handleFormSubmit} className={styles.submitButton}>
+                    Create Event
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : selectedEvent ? (
             // Event Editor View
             <>
               <div className={styles.header}>
@@ -147,7 +194,7 @@ export default function SwordlandPage() {
               <div className={styles.header}>
                 <h1 className={styles.title}>Swordland Event Management</h1>
                 <button
-                  onClick={handleCreateEvent}
+                  onClick={handleCreateEventClick}
                   className={styles.createButton}
                   disabled={isLoading}
                 >
@@ -172,4 +219,3 @@ export default function SwordlandPage() {
     </>
   );
 }
-

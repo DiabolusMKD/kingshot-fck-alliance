@@ -67,7 +67,8 @@ export interface PlayerAssignment {
   legion: string; // 'legion1', 'legion2', 'building1', 'building2', etc.
   name: string;
   power: number;
-  triAlliancePower: number;
+  triAlliancePower?: number;
+  swordlandPower?: number;
 }
 
 export interface EventAssignments {

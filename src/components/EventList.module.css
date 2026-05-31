@@ -159,3 +159,11 @@
 .editBtn:hover {
   background-color: var(--accent-hover);
 }
+
+.section {
+  margin-bottom: 3rem;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
