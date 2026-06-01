@@ -1,6 +1,9 @@
 .container {
   width: 100%;
   padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .searchWrapper {
@@ -57,9 +60,11 @@
   margin-bottom: 2rem;
 }
 
+.statusSelect,
 .generateButton,
 .saveButton,
-.resetButton {
+.resetButton,
+.uploadJsonButton {
   width: auto;
   min-width: 140px;
   padding: 0.75rem 1.25rem;
@@ -70,15 +75,10 @@
   transition: all 0.2s ease;
 }
 
-.generateButton {
-  border: 1px solid var(--accent-color);
-  background-color: var(--bg-tertiary);
-  color: var(--accent-color);
-}
-
-.generateButton:hover {
-  background-color: var(--accent-color);
-  color: white;
+.statusSelect {
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 .saveButton {
@@ -89,6 +89,22 @@
 
 .saveButton:hover {
   background-color: var(--accent-hover);
+}
+
+.saveButton:disabled {
+  background-color: var(--text-secondary);
+  cursor: not-allowed;
+}
+
+.uploadJsonButton {
+  border: 1px solid var(--accent-color);
+  background-color: var(--bg-tertiary);
+  color: var(--accent-color);
+}
+
+.uploadJsonButton:hover {
+  background-color: var(--accent-color);
+  color: white;
 }
 
 .resetButton {
@@ -221,8 +237,161 @@
 
 .label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   font-weight: 500;
   color: var(--text-primary);
   font-size: 0.95rem;
+}
+
+/* ===== MODAL STYLES ===== */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.modal h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+}
+
+.modalTextarea {
+  width: 100%;
+  min-height: 300px;
+  padding: 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: monospace;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+.modalTextarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.errorMessage {
+  padding: 0.75rem 1rem;
+  background-color: rgba(255, 100, 100, 0.1);
+  color: #ff6464;
+  border: 1px solid #ff6464;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.modalActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.cancelButton,
+.loadButton {
+  padding: 0.65rem 1.25rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancelButton {
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.cancelButton:hover {
+  border-color: var(--accent-color);
+  background-color: var(--bg-secondary);
+}
+
+.loadButton {
+  border: none;
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.loadButton:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+}
+
+.loadButton:disabled {
+  background-color: var(--text-secondary);
+  cursor: not-allowed;
+}
+
+/* ===== SUBSTITUTE SECTION ===== */
+.substituteSection {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: var(--bg-primary);
+  border: 1px solid rgba(100, 100, 255, 0.3);
+  border-radius: 6px;
+}
+
+.removeButton {
+  padding: 0.4rem 0.8rem;
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.removeButton:hover {
+  background-color: #ff5252;
+}
+
+/* ===== CONSISTENT SECTION SPACING ===== */
+.playersHeader,
+.tableSection {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+}
+
+.legionsContainer {
+  margin-bottom: 3rem;
+}
+
+.actions {
+  margin-bottom: 3rem;
+}
+
+.textAreaWrapper {
+  margin-bottom: 3rem;
+}
+
+.previewContainer {
+  margin-bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }

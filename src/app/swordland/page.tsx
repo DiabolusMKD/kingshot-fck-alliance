@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Player, AllianceEvent, PlayerAssignment, EventStatus } from '@/types';
-import Navigation from '@/components/Navigation';
-import EventHero from '@/components/EventHero';
-import SwordlandEventLayout from '@/components/SwordlandEventLayout';
-import EventList from '@/components/EventList';
-import { getPlayers } from '@/utils/playerService';
+import { useState, useEffect } from "react";
+import { Player, AllianceEvent, PlayerAssignment, EventStatus } from "@/types";
+import Navigation from "@/components/Navigation";
+import EventHero from "@/components/EventHero";
+import SwordlandEventLayout from "@/components/SwordlandEventLayout";
+import EventList from "@/components/EventList";
+import { getPlayers } from "@/utils/playerService";
 import {
   getAllianceEvents,
   createAllianceEvent,
@@ -14,8 +14,8 @@ import {
   deleteAllianceEvent,
   serializeAssignments,
   deserializeAssignments,
-} from '@/utils/eventService';
-import styles from './page.module.css';
+} from "@/utils/eventService";
+import styles from "./page.module.css";
 
 const ALLIANCE_ID = 1;
 const EVENT_ID = 1; // Swordland event ID
@@ -27,15 +27,13 @@ interface EventFormData {
 export default function SwordlandPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [events, setEvents] = useState<AllianceEvent[]>([]);
-  const [selectedEvent, setSelectedEvent] = useState<AllianceEvent | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<AllianceEvent | null>(
+    null,
+  );
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [formData, setFormData] = useState<EventFormData>({ startsAt: '' });
+  const [formData, setFormData] = useState<EventFormData>({ startsAt: "" });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-
-  useEffect(() => {
-    loadData();
-  }, []);
 
   const loadData = async () => {
     try {
@@ -45,30 +43,36 @@ export default function SwordlandPage() {
         getAllianceEvents(ALLIANCE_ID, EVENT_ID),
       ]);
 
-      const sortedPlayers = playersData.sort((a, b) => b.swordlandPower - a.swordlandPower);
+      const sortedPlayers = playersData.sort(
+        (a, b) => b.swordlandPower - a.swordlandPower,
+      );
       setPlayers(sortedPlayers);
       setEvents(eventsData);
     } catch (error) {
-      console.error('Failed to load data:', error);
-      alert('Failed to load data');
+      console.error("Failed to load data:", error);
+      alert("Failed to load data");
     } finally {
       setIsLoading(false);
     }
   };
 
+  useEffect(() => {
+    loadData();
+  }, []);
+
   const handleCreateEventClick = () => {
     setShowCreateForm(true);
-    setFormData({ startsAt: '' });
+    setFormData({ startsAt: "" });
   };
 
   const handleFormCancel = () => {
     setShowCreateForm(false);
-    setFormData({ startsAt: '' });
+    setFormData({ startsAt: "" });
   };
 
   const handleFormSubmit = async () => {
     if (!formData.startsAt) {
-      alert('Please select a date and time');
+      alert("Please select a date and time");
       return;
     }
 
@@ -81,21 +85,24 @@ export default function SwordlandPage() {
       const newEvent = await createAllianceEvent({
         allianceId: ALLIANCE_ID,
         eventId: EVENT_ID,
-        status: 'not-started' as EventStatus,
+        status: "not-started" as EventStatus,
         startsAt: utcString,
         assignments: undefined,
       });
 
       setSelectedEvent(newEvent);
       setShowCreateForm(false);
-      setFormData({ startsAt: '' });
+      setFormData({ startsAt: "" });
     } catch (error) {
-      console.error('Failed to create event:', error);
-      alert('Failed to create event');
+      console.error("Failed to create event:", error);
+      alert("Failed to create event");
     }
   };
 
-  const handleSaveAssignments = async (assignments: PlayerAssignment[]) => {
+  const handleSaveAssignments = async (
+    assignments: PlayerAssignment[],
+    eventStatus: EventStatus,
+  ) => {
     if (!selectedEvent) return;
 
     setIsSaving(true);
@@ -105,21 +112,23 @@ export default function SwordlandPage() {
       const updated = await updateAllianceEvent(selectedEvent.id!, {
         assignments: serialized,
         updatedAt: new Date().toISOString(),
+        status: eventStatus,
       });
 
       setSelectedEvent(updated);
       await loadData();
-      alert('Event saved successfully!');
+      alert("Event saved successfully!");
+      handleBackToList();
     } catch (error) {
-      console.error('Failed to save event:', error);
-      alert('Failed to save event');
+      console.error("Failed to save event:", error);
+      alert("Failed to save event");
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleDeleteEvent = async (eventId: number) => {
-    if (!confirm('Are you sure you want to delete this event?')) return;
+    if (!confirm("Are you sure you want to delete this event?")) return;
 
     try {
       await deleteAllianceEvent(eventId);
@@ -128,8 +137,8 @@ export default function SwordlandPage() {
         setSelectedEvent(null);
       }
     } catch (error) {
-      console.error('Failed to delete event:', error);
-      alert('Failed to delete event');
+      console.error("Failed to delete event:", error);
+      alert("Failed to delete event");
     }
   };
 
@@ -147,7 +156,9 @@ export default function SwordlandPage() {
             <div className={styles.formModal}>
               <div className={styles.formContent}>
                 <h2>Create New Swordland Event</h2>
-                <p>Choose a date and time for this event (will be stored as UTC)</p>
+                <p>
+                  Choose a date and time for this event (will be stored as UTC)
+                </p>
 
                 <div className={styles.formGroup}>
                   <label htmlFor="startsAt">Event Date & Time</label>
@@ -163,10 +174,16 @@ export default function SwordlandPage() {
                 </div>
 
                 <div className={styles.formActions}>
-                  <button onClick={handleFormCancel} className={styles.cancelButton}>
+                  <button
+                    onClick={handleFormCancel}
+                    className={styles.cancelButton}
+                  >
                     Cancel
                   </button>
-                  <button onClick={handleFormSubmit} className={styles.submitButton}>
+                  <button
+                    onClick={handleFormSubmit}
+                    className={styles.submitButton}
+                  >
                     Create Event
                   </button>
                 </div>
@@ -176,16 +193,22 @@ export default function SwordlandPage() {
             // Event Editor View
             <>
               <div className={styles.header}>
-                <button onClick={handleBackToList} className={styles.backButton}>
+                <button
+                  onClick={handleBackToList}
+                  className={styles.backButton}
+                >
                   ← Back to Events
                 </button>
               </div>
               <EventHero eventType="swordland" />
               <SwordlandEventLayout
                 players={players}
-                initialAssignments={deserializeAssignments(selectedEvent.assignments || null)}
+                initialAssignments={deserializeAssignments(
+                  selectedEvent.assignments || null,
+                )}
                 onSave={handleSaveAssignments}
                 isSaving={isSaving}
+                eventStatus={selectedEvent.status}
               />
             </>
           ) : (

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { EventType } from '@/types';
 import styles from './EventHero.module.css';
 
@@ -20,16 +21,48 @@ const EVENT_TITLES = {
 };
 
 export default function EventHero({ eventType }: EventHeroProps) {
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const imageUrl = HERO_IMAGES[eventType];
   const title = EVENT_TITLES[eventType];
 
+  const handleImageClick = () => {
+    setIsFullscreen(true);
+  };
+
+  const handleCloseFullscreen = () => {
+    setIsFullscreen(false);
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      handleCloseFullscreen();
+    }
+  };
+
   return (
-    <div className={styles.hero}>
-      <div className={styles.imageContainer}>
-        <img src={imageUrl} alt={title} className={styles.image} />
-        <div className={styles.overlay}></div>
-        <h1 className={styles.title}>{title}</h1>
+    <>
+      <div className={styles.hero}>
+        <div className={styles.imageContainer} onClick={handleImageClick}>
+          <img src={imageUrl} alt={title} className={styles.image} />
+          <div className={styles.overlay}></div>
+          <h1 className={styles.title}>{title}</h1>
+        </div>
       </div>
-    </div>
+
+      {isFullscreen && (
+        <div className={styles.fullscreenModal} onClick={handleBackdropClick}>
+          <div className={styles.fullscreenContent}>
+            <button
+              className={styles.closeButton}
+              onClick={handleCloseFullscreen}
+              aria-label="Close fullscreen"
+            >
+              ✕
+            </button>
+            <img src={imageUrl} alt={title} className={styles.fullscreenImage} />
+          </div>
+        </div>
+      )}
+    </>
   );
 }

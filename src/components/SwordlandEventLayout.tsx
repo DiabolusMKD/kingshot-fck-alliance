@@ -3,7 +3,13 @@
 import { useEffect, useState } from "react";
 import LegionTable from "./LegionTable";
 import BuildingPreview from "./BuildingPreview";
-import { Player, PlayerAssignment } from "@/types";
+import {
+  Player,
+  PlayerAssignment,
+  EventStatus,
+  LegionBuildingData,
+  BuildingAssignment,
+} from "@/types";
 import styles from "./SwordlandEventLayout.module.css";
 
 type Legion = "legion1" | "legion2";
@@ -12,17 +18,6 @@ interface LegionAssignments {
   legion1: Player[];
   legion2: Player[];
   unassigned: Player[];
-}
-
-interface BuildingAssignment {
-  leader: Player | null;
-  support: Player[];
-  manual: boolean;
-}
-
-interface LegionBuildingData {
-  buildings: Record<string, BuildingAssignment>;
-  substitutes: Player[];
 }
 
 interface PreviewState {
@@ -50,12 +45,14 @@ const emptyBuildings = (): Record<string, BuildingAssignment> =>
 export default function SwordlandEventLayout({
   players,
   initialAssignments = [],
+  eventStatus = "not-started",
   onSave,
   isSaving,
 }: {
   players: Player[];
   initialAssignments?: PlayerAssignment[];
-  onSave: (a: PlayerAssignment[]) => Promise<void>;
+  eventStatus?: EventStatus;
+  onSave: (a: PlayerAssignment[], status: EventStatus) => Promise<void>;
   isSaving?: boolean;
 }) {
   const [assignments, setAssignments] = useState<LegionAssignments>({
@@ -63,6 +60,9 @@ export default function SwordlandEventLayout({
     legion2: [],
     unassigned: [],
   });
+
+  const [currentEventStatus, setCurrentEventStatus] =
+    useState<EventStatus>(eventStatus);
 
   const [legionSubstitutes, setLegionSubstitutes] = useState<{
     legion1: Player[];
@@ -75,6 +75,9 @@ export default function SwordlandEventLayout({
   const [search, setSearch] = useState("");
   const [jsonOut, setJsonOut] = useState("");
   const [textOut, setTextOut] = useState("");
+  const [jsonInput, setJsonInput] = useState("");
+  const [showJsonModal, setShowJsonModal] = useState(false);
+  const [jsonModalError, setJsonModalError] = useState("");
 
   const [preview, setPreview] = useState<PreviewState>({
     legion1: { buildings: emptyBuildings(), substitutes: [] },
@@ -89,14 +92,28 @@ export default function SwordlandEventLayout({
       unassigned: [],
     };
 
+    const nextSubstitutes = {
+      legion1: [] as Player[],
+      legion2: [] as Player[],
+    };
+
     players.forEach((p) => {
       const found = initialAssignments.find((a) => a.playerId === p.id);
 
       if (!found) next.unassigned.push(p);
-      else next[found.legion as keyof LegionAssignments].push(p);
+      else if (found.legion === "legion1" || found.legion === "legion2") {
+        next[found.legion].push(p);
+      } else if (found.legion === "substitute_legion1") {
+        nextSubstitutes.legion1.push(p);
+      } else if (found.legion === "substitute_legion2") {
+        nextSubstitutes.legion2.push(p);
+      } else {
+        next.unassigned.push(p);
+      }
     });
 
     setAssignments(next);
+    setLegionSubstitutes(nextSubstitutes);
   }, [players, initialAssignments]);
 
   // ---------------- MOVE ----------------
@@ -121,14 +138,38 @@ export default function SwordlandEventLayout({
     });
   };
 
-  // ---------------- SUBSTITUTE ASSIGN ----------------
-  const handleLegionSubstituteAssign = (legion: Legion, player: Player) => {
-    setLegionSubstitutes((prev) => {
-      const exists = prev[legion].some((p) => p.id === player.id);
+  // Move player to/from substitute
+  const movePlayerToSubstitute = (id: string, legion: Legion) => {
+    const player = players.find((p) => p.id === id);
+    if (!player) return;
 
-      if (exists) {
-        return prev;
-      }
+    // Remove from legion
+    setAssignments((prev) => ({
+      ...prev,
+      [legion]: prev[legion].filter((p) => p.id !== id),
+    }));
+
+    // Add to substitutes
+    setLegionSubstitutes((prev) => {
+      const exists = prev[legion].some((p) => p.id === id);
+      if (exists) return prev;
+      return {
+        ...prev,
+        [legion]: [...prev[legion], player],
+      };
+    });
+  };
+
+  const movePlayerFromSubstitute = (id: string, legion: Legion) => {
+    // Remove from substitutes
+    setLegionSubstitutes((prev) => ({
+      ...prev,
+      [legion]: prev[legion].filter((p) => p.id !== id),
+    }));
+    // Add back to legion
+    setAssignments((prev) => {
+      const player = players.find((p) => p.id === id);
+      if (!player) return prev;
 
       return {
         ...prev,
@@ -136,6 +177,87 @@ export default function SwordlandEventLayout({
       };
     });
   };
+
+  function handleManualBuildingAssign(
+    legion: Legion,
+    player: Player,
+    building: string,
+  ) {
+    setPreview((prev) => {
+      const copy = structuredClone(prev);
+
+      const buildings = copy[legion].buildings;
+      const destination = buildings[building];
+
+      // Find the player's current building and role
+      let sourceBuilding = null;
+      let wasLeader = false;
+
+      for (const b of Object.values(buildings)) {
+        if (b.leader?.id === player.id) {
+          sourceBuilding = b;
+          wasLeader = true;
+          break;
+        }
+
+        if (b.support.some((s) => s.id === player.id)) {
+          sourceBuilding = b;
+          break;
+        }
+      }
+
+      // Already assigned to this building → do nothing
+      if (sourceBuilding === destination) {
+        return prev;
+      }
+
+      // Remove player from current building
+      if (sourceBuilding) {
+        if (wasLeader) {
+          if (sourceBuilding.support.length > 0) {
+            // Promote strongest support to leader
+            const strongest = sourceBuilding.support.reduce((a, b) =>
+              a.swordlandPower > b.swordlandPower ? a : b,
+            );
+
+            sourceBuilding.support = sourceBuilding.support.filter(
+              (p) => p.id !== strongest.id,
+            );
+
+            sourceBuilding.leader = strongest;
+          } else {
+            sourceBuilding.leader = null;
+          }
+        } else {
+          sourceBuilding.support = sourceBuilding.support.filter(
+            (p) => p.id !== player.id,
+          );
+        }
+      }
+
+      // Prevent duplicate entries in destination support
+      destination.support = destination.support.filter(
+        (p) => p.id !== player.id,
+      );
+
+      // Place player in destination
+      if (!destination.leader) {
+        destination.leader = player;
+      } else if (player.swordlandPower > destination.leader.swordlandPower) {
+        destination.support.unshift(destination.leader);
+        destination.leader = player;
+      } else {
+        destination.support.push(player);
+      }
+
+      return copy;
+    });
+  }
+
+  // Auto-generate on any change
+  useEffect(() => {
+    handleGenerate();
+  }, [assignments, legionSubstitutes]);
 
   // ---------------- FILTER ----------------
   const filter = (list: Player[]) =>
@@ -256,25 +378,58 @@ ${buildingText}${substitutesText}`;
         name: p.name,
         power: p.swordlandPower,
       })),
+      ...legionSubstitutes.legion1.map((p) => ({
+        playerId: p.id,
+        legion: "substitute_legion1" as const,
+        name: p.name,
+        power: p.swordlandPower,
+      })),
+      ...legionSubstitutes.legion2.map((p) => ({
+        playerId: p.id,
+        legion: "substitute_legion2" as const,
+        name: p.name,
+        power: p.swordlandPower,
+      })),
     ];
 
-    await onSave(payload);
+    await onSave(payload, currentEventStatus);
   };
 
-  // ---------------- RESET ----------------
-  const reset = () =>
+  // Reset everything
+  const reset = () => {
     setAssignments({
       legion1: [],
       legion2: [],
       unassigned: players,
     });
+    setLegionSubstitutes({
+      legion1: [],
+      legion2: [],
+    });
+    setSearch("");
+    setJsonInput("");
+    setJsonOut("");
+    setTextOut("");
+    setJsonModalError("");
+    setShowJsonModal(false);
+    setPreview({
+      legion1: { buildings: emptyBuildings(), substitutes: [] },
+      legion2: { buildings: emptyBuildings(), substitutes: [] },
+    });
+  };
 
-  // ---------------- JSON UPLOAD ----------------
-  const uploadJson = (value: string) => {
+  // Upload JSON from modal
+  const uploadJson = () => {
+    setJsonModalError("");
     try {
-      const parsed = JSON.parse(value);
+      const parsed = JSON.parse(jsonInput);
 
-      if (!parsed.legion1 || !parsed.legion2) return;
+      if (!parsed.legion1 || !parsed.legion2) {
+        setJsonModalError(
+          "Invalid JSON format. Expected legion1 and legion2 fields.",
+        );
+        return;
+      }
 
       const extract = (data: LegionBuildingData) => {
         const all: Player[] = [];
@@ -293,11 +448,22 @@ ${buildingText}${substitutesText}`;
         unassigned: [],
       });
 
+      setLegionSubstitutes({
+        legion1: parsed.legion1.substitutes || [],
+        legion2: parsed.legion2.substitutes || [],
+      });
+
       setPreview(parsed);
-    } catch {
-      alert("Invalid JSON");
+      setShowJsonModal(false);
+      setJsonInput("");
+    } catch (error) {
+      setJsonModalError("Invalid JSON. Please check the format and try again.");
     }
   };
+
+  console.log(preview);
+  console.log(assignments);
+  console.log(legionSubstitutes);
 
   return (
     <div className={styles.container}>
@@ -349,37 +515,88 @@ ${buildingText}${substitutesText}`;
 
       {/* LEGIONS */}
       <div className={styles.legionsContainer}>
-        <LegionTable
-          title={`Legion 1 (${assignments.legion1.length})`}
-          players={assignments.legion1}
-          legion="legion1"
-          BUILDINGS={BUILDINGS}
-          filterPlayers={filter}
-          handleManualBuildingAssign={() => {}}
-          handleLegionSubstituteAssign={handleLegionSubstituteAssign}
-          movePlayer={movePlayer}
-        />
+        <div style={{ flex: 1 }}>
+          <LegionTable
+            title={`Legion 1 (${assignments.legion1.length})`}
+            players={assignments.legion1}
+            legion="legion1"
+            BUILDINGS={BUILDINGS}
+            filterPlayers={filter}
+            handleManualBuildingAssign={handleManualBuildingAssign}
+            movePlayerToSubstitute={movePlayerToSubstitute}
+            movePlayer={movePlayer}
+            preview={preview?.legion1 || undefined}
+          />
 
-        <LegionTable
-          title={`Legion 2 (${assignments.legion2.length})`}
-          players={assignments.legion2}
-          legion="legion2"
-          BUILDINGS={BUILDINGS}
-          filterPlayers={filter}
-          handleManualBuildingAssign={() => {}}
-          handleLegionSubstituteAssign={handleLegionSubstituteAssign}
-          movePlayer={movePlayer}
-        />
+          {/* Substitutes for Legion 1 */}
+          <LegionTable
+            title={`Substitutes (${legionSubstitutes.legion1.length})`}
+            players={legionSubstitutes.legion1}
+            legion="legion1"
+            BUILDINGS={[]}
+            selectedBuilding={"substitute"}
+            filterPlayers={filter}
+            handleManualBuildingAssign={() => {}}
+            movePlayerToSubstitute={() => {}}
+            movePlayer={() => {}}
+            movePlayerFromSubstitute={movePlayerFromSubstitute}
+          />
+        </div>
+
+        <div style={{ flex: 1 }}>
+          <LegionTable
+            title={`Legion 2 (${assignments.legion2.length})`}
+            players={assignments.legion2}
+            legion="legion2"
+            BUILDINGS={BUILDINGS}
+            filterPlayers={filter}
+            handleManualBuildingAssign={handleManualBuildingAssign}
+            movePlayerToSubstitute={movePlayerToSubstitute}
+            movePlayer={movePlayer}
+            preview={preview?.legion2 || undefined}
+          />
+
+          {/* Substitutes for Legion 2 */}
+          <LegionTable
+            title={`Substitutes (${legionSubstitutes.legion2.length})`}
+            players={legionSubstitutes.legion2}
+            legion="legion2"
+            BUILDINGS={[]}
+            selectedBuilding={"substitute"}
+            filterPlayers={filter}
+            handleManualBuildingAssign={() => {}}
+            movePlayerToSubstitute={() => {}}
+            movePlayer={() => {}}
+            movePlayerFromSubstitute={movePlayerFromSubstitute}
+          />
+        </div>
       </div>
 
       {/* ACTIONS */}
       <div className={styles.actions}>
-        <button className={styles.generateButton} onClick={handleGenerate}>
-          Generate
+        <select
+          value={currentEventStatus}
+          onChange={(e) => setCurrentEventStatus(e.target.value as EventStatus)}
+          className={styles.statusSelect}
+          name="eventStatus"
+        >
+          <option value="not-started">Not Started</option>
+          <option value="ongoing">Ongoing</option>
+          <option value="completed">Completed</option>
+        </select>
+        <button
+          className={styles.saveButton}
+          onClick={handleSave}
+          disabled={isSaving}
+        >
+          {isSaving ? "Saving..." : "Save"}
         </button>
 
-        <button className={styles.saveButton} onClick={handleSave}>
-          Save
+        <button
+          className={styles.uploadJsonButton}
+          onClick={() => setShowJsonModal(true)}
+        >
+          Upload JSON
         </button>
 
         <button className={styles.resetButton} onClick={reset}>
@@ -416,18 +633,42 @@ ${buildingText}${substitutesText}`;
         </div>
       )}
 
-      {/* UPLOAD */}
-      <div className={styles.textAreaWrapper}>
-        <label htmlFor="jsonUpload" className={styles.label}>
-          Import JSON (Paste JSON to load assignments)
-        </label>
-        <textarea
-          id="jsonUpload"
-          className={styles.textarea}
-          placeholder="Paste JSON here..."
-          onChange={(e) => uploadJson(e.target.value)}
-        />
-      </div>
+      {/* UPLOAD JSON MODAL */}
+      {showJsonModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <h2>Upload JSON Configuration</h2>
+            <textarea
+              value={jsonInput}
+              onChange={(e) => setJsonInput(e.target.value)}
+              placeholder="Paste JSON here..."
+              className={styles.modalTextarea}
+            />
+            {jsonModalError && (
+              <div className={styles.errorMessage}>{jsonModalError}</div>
+            )}
+            <div className={styles.modalActions}>
+              <button
+                onClick={() => {
+                  setShowJsonModal(false);
+                  setJsonInput("");
+                  setJsonModalError("");
+                }}
+                className={styles.cancelButton}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={uploadJson}
+                disabled={!jsonInput.trim()}
+                className={styles.loadButton}
+              >
+                Load
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* PREVIEW */}
       <div className={styles.previewContainer}>
@@ -436,7 +677,7 @@ ${buildingText}${substitutesText}`;
           legion="legion1"
           legionData={preview.legion1}
           BUILDINGS={BUILDINGS}
-          moveSubstitute={handleLegionSubstituteAssign}
+          moveSubstitute={() => {}}
         />
 
         <BuildingPreview
@@ -444,7 +685,7 @@ ${buildingText}${substitutesText}`;
           legion="legion2"
           legionData={preview.legion2}
           BUILDINGS={BUILDINGS}
-          moveSubstitute={handleLegionSubstituteAssign}
+          moveSubstitute={() => {}}
         />
       </div>
     </div>

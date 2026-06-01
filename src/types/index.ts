@@ -78,3 +78,13 @@ export interface EventAssignments {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export interface BuildingAssignment {
+  leader: Player | null;
+  support: Player[];
+  manual: boolean;
+}
+export interface LegionBuildingData {
+  buildings: Record<string, BuildingAssignment>;
+  substitutes: Player[];
+}

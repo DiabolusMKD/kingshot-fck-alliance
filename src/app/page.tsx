@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import styles from "./page.module.css";
@@ -17,7 +15,7 @@ export default function Home() {
               alt="FCK Alliance"
               className={styles.image}
               width={300}
-              height={200}
+              height={100}
             />
             <h1 className={styles.title}>Welcome to FCK Alliance</h1>
             <p className={styles.description}>

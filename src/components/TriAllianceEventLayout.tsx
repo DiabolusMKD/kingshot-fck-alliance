@@ -37,6 +37,8 @@ export default function TriAllianceEventLayout({
   const [generatedJson, setGeneratedJson] = useState("");
   const [jsonInput, setJsonInput] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [showJsonModal, setShowJsonModal] = useState(false);
+  const [jsonModalError, setJsonModalError] = useState("");
 
   useEffect(() => {
     // Load initial assignments or default to unassigned
@@ -74,6 +76,11 @@ export default function TriAllianceEventLayout({
     }
   }, [players, initialAssignments]);
 
+  // Auto-generate on any assignment change
+  useEffect(() => {
+    handleGenerateString();
+  }, [assignments]);
+
   const movePlayer = (
     playerId: string,
     fromCategory: string,
@@ -92,8 +99,9 @@ export default function TriAllianceEventLayout({
         ].filter((p) => p.id !== playerId);
       });
 
-      // Add to destination
-      if (toCategory !== "unassigned") {
+      // Add to destination (validate that toCategory is a valid key)
+      const validKeys = Object.keys(newAssignments) as (keyof LegionAssignments)[];
+      if (validKeys.includes(toCategory as keyof LegionAssignments)) {
         newAssignments[toCategory as keyof LegionAssignments].push(player);
       } else {
         newAssignments.unassigned.push(player);
@@ -204,15 +212,18 @@ Substitutes: ${formatPlayers(assignments.substituteLegion2)}`;
     setGeneratedJson("");
     setJsonInput("");
     setSearchTerm("");
+    setJsonModalError("");
+    setShowJsonModal(false);
   };
 
   const handleJsonImport = () => {
+    setJsonModalError("");
     try {
       const parsed = JSON.parse(jsonInput);
 
       // Validate JSON structure
       if (!parsed.legion1 || !parsed.legion2) {
-        alert("Invalid JSON format. Expected legion1 and legion2 fields.");
+        setJsonModalError("Invalid JSON format. Expected legion1 and legion2 fields.");
         return;
       }
 
@@ -279,10 +290,9 @@ Substitutes: ${formatPlayers(assignments.substituteLegion2)}`;
 
       setAssignments(newAssignments);
       setJsonInput("");
-      alert("JSON imported successfully!");
+      setShowJsonModal(false);
     } catch (error) {
-      alert("Invalid JSON format. Please check and try again.");
-      console.error("JSON import error:", error);
+      setJsonModalError("Invalid JSON format. Please check and try again.");
     }
   };
 
@@ -303,6 +313,26 @@ Substitutes: ${formatPlayers(assignments.substituteLegion2)}`;
       allAssignments.push({
         playerId: p.id,
         legion: "legion2",
+        name: p.name,
+        triAlliancePower: p.trialliancePower,
+        power: p.power,
+      });
+    });
+
+    assignments.substituteLegion1.forEach((p) => {
+      allAssignments.push({
+        playerId: p.id,
+        legion: "substituteLegion1",
+        name: p.name,
+        triAlliancePower: p.trialliancePower,
+        power: p.power,
+      });
+    });
+
+    assignments.substituteLegion2.forEach((p) => {
+      allAssignments.push({
+        playerId: p.id,
+        legion: "substituteLegion2",
         name: p.name,
         triAlliancePower: p.trialliancePower,
         power: p.power,
@@ -431,18 +461,18 @@ Substitutes: ${formatPlayers(assignments.substituteLegion2)}`;
       {/* Actions */}
       <div className={styles.actions}>
         <button
-          onClick={handleGenerateString}
-          className={styles.generateButton}
-        >
-          Generate String
-        </button>
-
-        <button
           onClick={handleReset}
           className={styles.resetButton}
           type="button"
         >
           Reset
+        </button>
+
+        <button
+          onClick={() => setShowJsonModal(true)}
+          className={styles.uploadJsonButton}
+        >
+          Upload JSON
         </button>
 
         <button
@@ -484,26 +514,42 @@ Substitutes: ${formatPlayers(assignments.substituteLegion2)}`;
         </div>
       )}
 
-      {/* JSON Import Section */}
-      <div className={styles.textAreaWrapper}>
-        <label htmlFor="jsonInput" className={styles.label}>
-          Import JSON (Paste JSON to load assignments)
-        </label>
-        <textarea
-          id="jsonInput"
-          value={jsonInput}
-          onChange={(e) => setJsonInput(e.target.value)}
-          className={styles.textarea}
-          placeholder="Paste JSON here..."
-        />
-        <button
-          onClick={handleJsonImport}
-          className={styles.generateButton}
-          disabled={!jsonInput.trim()}
-        >
-          Load JSON
-        </button>
-      </div>
+      {/* JSON Import Modal */}
+      {showJsonModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <h2>Upload JSON Configuration</h2>
+            <textarea
+              value={jsonInput}
+              onChange={(e) => setJsonInput(e.target.value)}
+              placeholder="Paste JSON here..."
+              className={styles.modalTextarea}
+            />
+            {jsonModalError && (
+              <div className={styles.errorMessage}>{jsonModalError}</div>
+            )}
+            <div className={styles.modalActions}>
+              <button
+                onClick={() => {
+                  setShowJsonModal(false);
+                  setJsonInput("");
+                  setJsonModalError("");
+                }}
+                className={styles.cancelButton}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleJsonImport}
+                disabled={!jsonInput.trim()}
+                className={styles.loadButton}
+              >
+                Load
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

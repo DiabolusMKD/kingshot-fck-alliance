@@ -21,8 +21,9 @@
 
 .eventsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: 1fr;
   gap: 1.5rem;
+  padding: 0 2rem;
 }
 
 @media (max-width: 768px) {
@@ -144,7 +145,6 @@
 }
 
 .editBtn {
-  width: 100%;
   padding: 0.65rem 1rem;
   background-color: var(--accent-color);
   color: white;

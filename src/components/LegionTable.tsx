@@ -1,6 +1,6 @@
 "use client";
 
-import { Player } from "@/types";
+import { LegionBuildingData, Player } from "@/types";
 import styles from "./LegionTable.module.css";
 
 type Legion = "legion1" | "legion2";
@@ -10,6 +10,8 @@ interface LegionTableProps {
   players: Player[];
   legion: Legion;
   BUILDINGS: string[];
+  selectedBuilding?: string | null;
+  preview?: LegionBuildingData;
   filterPlayers: (players: Player[]) => Player[];
 
   handleManualBuildingAssign: (
@@ -18,7 +20,9 @@ interface LegionTableProps {
     building: string,
   ) => void;
 
-  handleLegionSubstituteAssign: (legion: Legion, player: Player) => void;
+  movePlayerToSubstitute: (playerId: string, legion: Legion) => void;
+
+  movePlayerFromSubstitute?: (playerId: string, legion: Legion) => void;
 
   movePlayer: (
     playerId: string,
@@ -27,14 +31,66 @@ interface LegionTableProps {
   ) => void;
 }
 
+function getBuildingNameByPlayer(
+  buildings: LegionBuildingData["buildings"],
+  playerId: string,
+): string | undefined {
+  return Object.keys(buildings).find(
+    (key) =>
+      buildings[key].leader?.id === playerId ||
+      buildings[key].support.some((s) => s.id === playerId),
+  );
+}
+
+function UnassignPlayerButton({
+  player,
+  legion,
+  movePlayer,
+  movePlayerFromSubstitute,
+}: {
+  player: Player;
+  legion: Legion;
+  movePlayer: (
+    playerId: string,
+    fromCategory: string,
+    toCategory: string,
+  ) => void;
+  movePlayerFromSubstitute?: (playerId: string, legion: Legion) => void;
+}) {
+  if (movePlayerFromSubstitute) {
+    return (
+      <button
+        type="button"
+        className={styles.unassignButton}
+        onClick={() => movePlayerFromSubstitute(player.id, legion)}
+      >
+        Remove
+      </button>
+    );
+  } else {
+    return (
+      <button
+        type="button"
+        className={styles.unassignButton}
+        onClick={() => movePlayer(player.id, legion, "unassigned")}
+      >
+        Unassign
+      </button>
+    );
+  }
+}
+
 export default function LegionTable({
   title,
   players,
   legion,
   BUILDINGS,
+  selectedBuilding,
+  preview,
   filterPlayers,
   handleManualBuildingAssign,
-  handleLegionSubstituteAssign,
+  movePlayerToSubstitute,
+  movePlayerFromSubstitute,
   movePlayer,
 }: LegionTableProps) {
   const filtered = filterPlayers(players);
@@ -50,7 +106,6 @@ export default function LegionTable({
               <th>Player</th>
               <th>Power</th>
               <th>Building</th>
-              <th>Substitute</th>
               <th>Move</th>
             </tr>
           </thead>
@@ -64,18 +119,28 @@ export default function LegionTable({
                 <td>
                   <select
                     className={styles.tableSelect}
-                    defaultValue=""
+                    value={
+                      getBuildingNameByPlayer(
+                        preview?.buildings || {},
+                        player.id,
+                      ) || selectedBuilding || ""
+                    }
                     onChange={(e) => {
                       const value = e.target.value;
                       if (!value) return;
 
-                      handleManualBuildingAssign(legion, player, value);
+                      if (value === "substitute") {
+                        movePlayerToSubstitute(player.id, legion);
+                      } else {
+                        handleManualBuildingAssign(legion, player, value);
+                      }
                       e.target.value = "";
                     }}
                   >
                     <option value="" disabled>
-                      Select Building
+                      Select
                     </option>
+                    <option value="substitute">📌 Substitute</option>
 
                     {BUILDINGS.map((b) => (
                       <option key={`${legion}-${b}`} value={b}>
@@ -86,23 +151,12 @@ export default function LegionTable({
                 </td>
 
                 <td>
-                  <button
-                    type="button"
-                    className={styles.generateButton}
-                    onClick={() => handleLegionSubstituteAssign(legion, player)}
-                  >
-                    Add
-                  </button>
-                </td>
-
-                <td>
-                  <button
-                    type="button"
-                    className={styles.unassignButton}
-                    onClick={() => movePlayer(player.id, legion, "unassigned")}
-                  >
-                    Unassign
-                  </button>
+                  <UnassignPlayerButton
+                    player={player}
+                    legion={legion}
+                    movePlayer={movePlayer}
+                    movePlayerFromSubstitute={movePlayerFromSubstitute}
+                  />
                 </td>
               </tr>
             ))}
