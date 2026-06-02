@@ -2,8 +2,5 @@
   "buildCommand": "npm run build",
   "installCommand": "npm ci",
   "framework": "nextjs",
-  "outputDirectory": ".next",
-  "env": {
-    "NEXT_PUBLIC_KINGSHOT_API_URL": "@next_public_kingshot_api_url"
-  }
+  "outputDirectory": ".next"
 }
